@@ -1,0 +1,639 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="自动装箱(autoboxing)是指 Java 编译器自动将基本数据类型值转换成对应的包装类的对象，例如将 int 转换为 Integer 对象，将 boolean 转换问 Boolean 对象。而拆箱(unboxing)则是反过来转换。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 的自动装箱(autoboxing)与拆箱(unboxing)">
+<meta property="og:url" content="http://chanthuang.github.io/2016/09/07/java-autoboxing-and-unboxing/index.html">
+<meta property="og:site_name" content="Chant 的博客">
+<meta property="og:description" content="自动装箱(autoboxing)是指 Java 编译器自动将基本数据类型值转换成对应的包装类的对象，例如将 int 转换为 Integer 对象，将 boolean 转换问 Boolean 对象。而拆箱(unboxing)则是反过来转换。">
+<meta property="og:updated_time" content="2016-09-30T02:48:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java 的自动装箱(autoboxing)与拆箱(unboxing)">
+<meta name="twitter:description" content="自动装箱(autoboxing)是指 Java 编译器自动将基本数据类型值转换成对应的包装类的对象，例如将 int 转换为 Integer 对象，将 boolean 转换问 Boolean 对象。而拆箱(unboxing)则是反过来转换。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://chanthuang.github.io/2016/09/07/java-autoboxing-and-unboxing/"/>
+
+  <title> Java 的自动装箱(autoboxing)与拆箱(unboxing) | Chant 的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Chant 的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java 的自动装箱(autoboxing)与拆箱(unboxing)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-07T00:35:22+08:00" content="2016-09-07">
+              2016-09-07
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>自动装箱(autoboxing)是指 Java 编译器自动将基本数据类型值转换成对应的包装类的对象，例如将 int 转换为 Integer 对象，将 boolean 转换问 Boolean 对象。而拆箱(unboxing)则是反过来转换。</p>
+<a id="more"></a>
+<h2 id="基本数据类型及其包装类的对应"><a href="#基本数据类型及其包装类的对应" class="headerlink" title="基本数据类型及其包装类的对应"></a>基本数据类型及其包装类的对应</h2><p>以下这些基本数据类型都有对应的包装类</p>
+<table>
+<thead>
+<tr>
+<th>基本数据类型</th>
+<th>包装类</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>boolean</td>
+<td>Boolean</td>
+</tr>
+<tr>
+<td>byte</td>
+<td>Byte</td>
+</tr>
+<tr>
+<td>char</td>
+<td>Character</td>
+</tr>
+<tr>
+<td>float</td>
+<td>Float</td>
+</tr>
+<tr>
+<td>int</td>
+<td>Integer</td>
+</tr>
+<tr>
+<td>long</td>
+<td>Long</td>
+</tr>
+<tr>
+<td>short</td>
+<td>Short</td>
+</tr>
+<tr>
+<td>double</td>
+<td>Double</td>
+</tr>
+</tbody>
+</table>
+<h2 id="自动装箱与拆箱的例子"><a href="#自动装箱与拆箱的例子" class="headerlink" title="自动装箱与拆箱的例子"></a>自动装箱与拆箱的例子</h2><p>自动装箱和拆箱便于我们在要求传入对象的地方直接传入基本数据类型，或者反过来。如：</p>
+<ol>
+<li><p>自动装箱的例子</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">List&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">list.add(<span class="number">1</span>);</div></pre></td></tr></table></figure>
+<p> 因为 <code>list</code> 是一个 <code>Integer</code> 对象的集合，理论上 <code>add</code> 方法传进去的都应该是 <code>Integer</code> 对象，但是这里可以传递一个 <code>int</code>（数值2），就是因为编译器把 <code>int</code> 转换为 <code>Integer</code> 了。实际上编译器会把上面的代码转变为：</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">List&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">list.add(Integer.valueOf(<span class="number">1</span>));</div></pre></td></tr></table></figure>
+</li>
+<li><p>拆箱的例子</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getFirstNumber</span><span class="params">(List&lt;Integer&gt; list)</span> </span>&#123;</div><div class="line">	<span class="keyword">int</span> firstNumber = list.get(<span class="number">0</span>);</div><div class="line">	<span class="keyword">return</span> firstNumber;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 与自动装箱相反的，在这段代码中，编译器自动把 <code>Integer</code> 对象转换为 <code>int</code> 基本数据类型。</p>
+</li>
+</ol>
+<p>如果没有自动装箱和拆箱，上面的代码将编译不通过。上面的代码得这样写才行：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">List&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">list.add(Integer.valueOf(<span class="number">1</span>));</div></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getFirstNumber</span><span class="params">(List&lt;Integer&gt; list)</span> </span>&#123;</div><div class="line">	<span class="keyword">int</span> firstNumber = list.get(<span class="number">0</span>).intValue();</div><div class="line">	<span class="keyword">return</span> firstNumber;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可见 Java 编译器帮我们做的事情还是带来一些便利的。</p>
+<h2 id="什么时候会自动装箱和拆箱"><a href="#什么时候会自动装箱和拆箱" class="headerlink" title="什么时候会自动装箱和拆箱"></a>什么时候会自动装箱和拆箱</h2><p>自动装箱和拆箱会在以下这些情况发生：</p>
+<ul>
+<li>把基本数据类型赋值给一个声明为其包装类类型的变量时，像 <code>Integer obj = 1</code> 将发生装箱；反之拆箱。</li>
+<li>把基本数据类型作为函数调用的参数，而该参数的类型是其包装类时，像前面的 <code>list.add(1);</code> 将发生装箱；反之拆箱。</li>
+<li>对包装类进行加减乘除等基本运算时，将发生拆箱。像 <code>Integer a = 0; a += 1;</code> 在执行 <code>+=</code> 运算的 <code>+</code> 运算时将发生拆箱。</li>
+</ul>
+<h2 id="可能带来的问题"><a href="#可能带来的问题" class="headerlink" title="可能带来的问题"></a>可能带来的问题</h2><p>虽然自动装箱与拆箱偷偷帮我们做了很多事，但是在一些情况下它也可能导致问题。</p>
+<ol>
+<li><p>对象比较的结果<br> 考虑以下代码：</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestJava</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">	   	Integer number1 = <span class="number">128</span>;</div><div class="line">	   	Integer number2 = <span class="number">128</span>;</div><div class="line">	   	System.out.println(<span class="string">"number1 == number2: "</span> + (number1 == number2));</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 输出结果是：number1 == number2: false<br> 注意这里是用 <code>==</code> 比较两个 Integer 对象的内存指针，不是比较他们代表的值。<code>number1</code> 和 <code>number2</code> 是两个不同的对象，比较结果自然是 false。</p>
+<p> 继续看以下代码：</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestJava</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">	   	Integer number3 = <span class="number">127</span>;</div><div class="line">	   	Integer number4 = <span class="number">127</span>;</div><div class="line">	   	System.out.println(<span class="string">"number3 == number4: "</span> + (number3 == number4));</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 输出结果是：number3 == number4: true<br> (一脸惊恐.jpg) 几乎一样的代码，出来的结果却不一样。其实是因为 Java 虚拟机对 -128到127 的 Integer 对象做了缓存，所以 <code>number3</code> 和 <code>number4</code> 实际上是同一个对象，比较结果自然也就返回 true。</p>
+</li>
+<li><p>对象的过多创建<br> 考虑以下代码：</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Integer sum = <span class="number">0</span>;</div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</div><div class="line">	sum = sum + i;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 上面的代码中，由于 <code>sum</code> 是一个 <code>Integer</code> 对象，不能直接进行 <code>+</code> 操作，所以会先执行 <code>sum.intValue()</code> 拆箱，得到 <code>int</code> 类型进行 <code>+</code> 操作。然后再执行 <code>Integer.valueOf(sum)</code> 进行装箱操作，得到一个 <code>Integer</code> 对象赋值给 <code>sum</code>。虽然 Java 虚拟机对 -128 到 127 的 <code>Integer</code> 对象做了缓存，但是从第 128 到 1000 次循环中总共还要创建 873 个对象。这将导致程序的性能降低甚至触发垃圾回收。而简单地把 <code>sum</code> 的类型改为 <code>int</code> 就可解决问题。</p>
+</li>
+</ol>
+<p>所以在混合使用 Java 基本数据类型及其包装类时要特别注意这些问题。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/31/Android-View-的滚动原理和-Scroller、VelocityTracker-类的使用/" rel="next" title="Android View 的滚动原理和 Scroller、VelocityTracker 类的使用">
+                <i class="fa fa-chevron-left"></i> Android View 的滚动原理和 Scroller、VelocityTracker 类的使用
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/07/ECMAScript6-的-Promise-学习小结/" rel="prev" title="ECMAScript6 的 Promise 学习小结">
+                ECMAScript6 的 Promise 学习小结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Chant" />
+          <p class="site-author-name" itemprop="name">Chant</p>
+          <p class="site-description motion-element" itemprop="description">分享前端知识、Android开发知识</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本数据类型及其包装类的对应"><span class="nav-number">1.</span> <span class="nav-text">基本数据类型及其包装类的对应</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动装箱与拆箱的例子"><span class="nav-number">2.</span> <span class="nav-text">自动装箱与拆箱的例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么时候会自动装箱和拆箱"><span class="nav-number">3.</span> <span class="nav-text">什么时候会自动装箱和拆箱</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#可能带来的问题"><span class="nav-number">4.</span> <span class="nav-text">可能带来的问题</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chant</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

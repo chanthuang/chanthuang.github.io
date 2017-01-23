@@ -1,0 +1,602 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,UI," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="在 Android 开发中，View 和 Drawable 之间关系十分紧密，例如我们经常用 Drawable 作为一个 View 的背景。View 常常会有状态的改变，例如被按下、例如禁用，而不同的状态下 Drawable 也常有不同的表现。今天要探索的问题是 View 的状态改变是如何影响 Drawable 的表现的。以下将简单介绍我们平时如何在 View 上使用 Drawable，做到在不同">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从 Android 源码角度分析 View 的状态改变如何影响 Drawable 的表现">
+<meta property="og:url" content="http://chanthuang.github.io/2016/08/15/从-Android-源码角度分析-View-的状态改变如何影响-Drawable-的表现/index.html">
+<meta property="og:site_name" content="Chant 的博客">
+<meta property="og:description" content="在 Android 开发中，View 和 Drawable 之间关系十分紧密，例如我们经常用 Drawable 作为一个 View 的背景。View 常常会有状态的改变，例如被按下、例如禁用，而不同的状态下 Drawable 也常有不同的表现。今天要探索的问题是 View 的状态改变是如何影响 Drawable 的表现的。以下将简单介绍我们平时如何在 View 上使用 Drawable，做到在不同">
+<meta property="og:updated_time" content="2016-09-30T02:48:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从 Android 源码角度分析 View 的状态改变如何影响 Drawable 的表现">
+<meta name="twitter:description" content="在 Android 开发中，View 和 Drawable 之间关系十分紧密，例如我们经常用 Drawable 作为一个 View 的背景。View 常常会有状态的改变，例如被按下、例如禁用，而不同的状态下 Drawable 也常有不同的表现。今天要探索的问题是 View 的状态改变是如何影响 Drawable 的表现的。以下将简单介绍我们平时如何在 View 上使用 Drawable，做到在不同">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://chanthuang.github.io/2016/08/15/从-Android-源码角度分析-View-的状态改变如何影响-Drawable-的表现/"/>
+
+  <title> 从 Android 源码角度分析 View 的状态改变如何影响 Drawable 的表现 | Chant 的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Chant 的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                从 Android 源码角度分析 View 的状态改变如何影响 Drawable 的表现
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-15T20:38:42+08:00" content="2016-08-15">
+              2016-08-15
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在 Android 开发中，View 和 Drawable 之间关系十分紧密，例如我们经常用 Drawable 作为一个 View 的背景。View 常常会有状态的改变，例如被按下、例如禁用，而不同的状态下 Drawable 也常有不同的表现。今天要探索的问题是 View 的状态改变是如何影响 Drawable 的表现的。<br>以下将简单介绍我们平时如何在 View 上使用 Drawable，做到在不同状态下表现不一样。接着分析系统源码探索其中的原理。最后以系统的控件和自定义控件 2 个例子来验证和实践在 View 中自定义状态的做法。</p>
+<a id="more"></a>
+<p>注：</p>
+<ol>
+<li>本文的源码分析基于 Android API Level 23，并省略掉部分与本文关系不大的代码。</li>
+<li>在代码中加入了个人对源码的理解，以注释形式呈现。</li>
+<li>本文最后的 DEMO 项目源码托管到 <a href="https://github.com/chanthuang/CheckableListItem" target="_blank" rel="external">Github</a> 上。</li>
+</ol>
+<h2 id="如何给-View-在不同状态下设置不同背景色"><a href="#如何给-View-在不同状态下设置不同背景色" class="headerlink" title="如何给 View 在不同状态下设置不同背景色"></a>如何给 View 在不同状态下设置不同背景色</h2><p>可以对一个 View 设置 background 属性，传进去的是一个 Drawable。 如果该 Drawable 是一个 <code>StateListDrawable</code>（对应的 xml 标签为 <code>&lt;selctor&gt;</code>），那么它能在不同状态下显示不同的表现。例如一个 Button，可以在 normal、pressed、disabled 等状态下显示不同的背景色，像这样：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- button_bg.xml --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">selector</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">android:drawable</span>=<span class="string">"#CCCCCC"</span> <span class="attr">android:state_enabled</span>=<span class="string">"false"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">android:drawable</span>=<span class="string">"#666666"</span> <span class="attr">android:state_pressed</span>=<span class="string">"true"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">android:drawable</span>=<span class="string">"#999999"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">selector</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- layout.xml --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">Button</span></span></div><div class="line">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></div><div class="line">    <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></div><div class="line">    <span class="attr">android:background</span>=<span class="string">"@drawable/button_bg"</span></div><div class="line">    <span class="attr">android:text</span>=<span class="string">"Test Button"</span>/&gt;</div></pre></td></tr></table></figure>
+<p>这样即可实现使 Button 在不同状态下颜色不一样，normal 为 #999999，pressed 为 #666666，disabled 时为 #CCCCCC。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>以上是经常用来设置 Button 背景的用法，那么实际上 Button（View）的不同状态是如何和 Drawable 关联起来的？除了上面说的 pressed 和 enabled 状态，我们可以设置的状态还有哪些？如果系统提供的状态不够用，我们能否自己定义状态？带着这几个问题，我们来看 Android FrameWork 的源码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// View.java</span></div><div class="line"><span class="comment">// 首先，按钮被按下的时候，setPressed(boolean pressed) 会被调用。</span></div><div class="line"><span class="comment">// 注1：这里以 pressed 状态改变为例，从 setPressed 方法为入口。</span></div><div class="line"><span class="comment">// 同理当 enabled 或其他状态改变时，可以看 setEnabled 方法或其他对应方法。</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPressed</span><span class="params">(<span class="keyword">boolean</span> pressed)</span> </span>&#123;</div><div class="line">    <span class="keyword">final</span> <span class="keyword">boolean</span> needsRefresh =</div><div class="line">        pressed != ((mPrivateFlags &amp; PFLAG_PRESSED) == PFLAG_PRESSED);</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (pressed) &#123;</div><div class="line">        mPrivateFlags |= PFLAG_PRESSED;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        mPrivateFlags &amp;= ~PFLAG_PRESSED;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 调用 refreshDrawableState() 方法来刷新 View 的状态</span></div><div class="line">    <span class="keyword">if</span> (needsRefresh) &#123;</div><div class="line">        refreshDrawableState();</div><div class="line">    &#125;</div><div class="line">    dispatchSetPressed(pressed);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 接着看 refreshDrawableState() 方法。</span></div><div class="line"><span class="comment">// 该方法会使 View 更新它的 Drawable 的状态，并调用 drawableStateChanged() 方法。</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">refreshDrawableState</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">// 设置 PFLAG_DRAWABLE_STATE_DIRTY 标志位，后面会用到，并调用 drawableStateChanged() 方法</span></div><div class="line">    mPrivateFlags |= PFLAG_DRAWABLE_STATE_DIRTY;</div><div class="line">    drawableStateChanged();</div><div class="line"></div><div class="line">    ViewParent parent = mParent;</div><div class="line">    <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123;</div><div class="line">        parent.childDrawableStateChanged(<span class="keyword">this</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 接着看 drawableStateChanged() 方法。</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">drawableStateChanged</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">// 调用 getDrawableState() 方法得到当前 View 的状态合集，以一个 int 数组的形式存在。</span></div><div class="line">    <span class="keyword">final</span> <span class="keyword">int</span>[] state = getDrawableState();</div><div class="line"></div><div class="line">    <span class="comment">// 将状态合集设置给 background，那么 Drawable 就会自己更新状态并通知 View 重新绘制它。</span></div><div class="line">    <span class="keyword">final</span> Drawable bg = mBackground;</div><div class="line">    <span class="keyword">if</span> (bg != <span class="keyword">null</span> &amp;&amp; bg.isStateful()) &#123;</div><div class="line">        bg.setState(state);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 此处省略其他无关源代码...</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 接着看 getDrawableState() 方法，它会返回一个 resource ID 数组来表示 View 的当前状态。</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span>[] getDrawableState() &#123;</div><div class="line">    <span class="comment">// 因为 PFLAG_DRAWABLE_STATE_DIRTY 标志位在上面 refreshDrawableState() 方法中已经被设置，</span></div><div class="line">    <span class="comment">// 所以从 refreshDrawableState() 方法调用进来时肯定会进入下面的 else 分支，</span></div><div class="line">    <span class="comment">// 从 onCreateDrawableState(0) 方法取得 drawableState</span></div><div class="line">    <span class="keyword">if</span> ((mDrawableState != <span class="keyword">null</span>) &amp;&amp; ((mPrivateFlags &amp; PFLAG_DRAWABLE_STATE_DIRTY) == <span class="number">0</span>)) &#123;</div><div class="line">        <span class="keyword">return</span> mDrawableState;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        mDrawableState = onCreateDrawableState(<span class="number">0</span>);</div><div class="line">        mPrivateFlags &amp;= ~PFLAG_DRAWABLE_STATE_DIRTY;</div><div class="line">        <span class="keyword">return</span> mDrawableState;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 接着看 onCreateDrawableState(int extraSpace) 方法。它的作用是生成这个 View 的 Drawable State。</span></div><div class="line"><span class="keyword">protected</span> <span class="keyword">int</span>[] onCreateDrawableState(<span class="keyword">int</span> extraSpace) &#123;</div><div class="line">    <span class="comment">// 如果这个 View 设置了 DUPLICATE_PARENT_STATE 标志位（可通过 setDuplicateParentStateEnabled(boolean enabled)方法来设置），</span></div><div class="line">    <span class="comment">// 则直接通过父View的状态获得state，并返回。一般的 View 都没有设置这个标志位，所以这个条件一般不满足。</span></div><div class="line">    <span class="keyword">if</span> ((mViewFlags &amp; DUPLICATE_PARENT_STATE) == DUPLICATE_PARENT_STATE &amp;&amp;</div><div class="line">            mParent <span class="keyword">instanceof</span> View) &#123;</div><div class="line">        <span class="keyword">return</span> ((View) mParent).onCreateDrawableState(extraSpace);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">int</span>[] drawableState;</div><div class="line"></div><div class="line">    <span class="keyword">int</span> privateFlags = mPrivateFlags;</div><div class="line"></div><div class="line">    <span class="comment">// 检查这个 View 的 pressed、enabled、focuesed 等状态（系统提供的 View 的状态都会在这里被检查一遍），</span></div><div class="line">    <span class="comment">// 通过位运算记录在 viewStateIndex 这个整型变量的各个位上</span></div><div class="line">    <span class="keyword">int</span> viewStateIndex = <span class="number">0</span>;</div><div class="line">    <span class="keyword">if</span> ((privateFlags &amp; PFLAG_PRESSED) != <span class="number">0</span>) viewStateIndex |= StateSet.VIEW_STATE_PRESSED;</div><div class="line">    <span class="keyword">if</span> ((mViewFlags &amp; ENABLED_MASK) == ENABLED) viewStateIndex |= StateSet.VIEW_STATE_ENABLED;</div><div class="line">    <span class="keyword">if</span> (isFocused()) viewStateIndex |= StateSet.VIEW_STATE_FOCUSED;</div><div class="line">    <span class="keyword">if</span> ((privateFlags &amp; PFLAG_SELECTED) != <span class="number">0</span>) viewStateIndex |= StateSet.VIEW_STATE_SELECTED;</div><div class="line">    <span class="keyword">if</span> (hasWindowFocus()) viewStateIndex |= StateSet.VIEW_STATE_WINDOW_FOCUSED;</div><div class="line">    <span class="keyword">if</span> ((privateFlags &amp; PFLAG_ACTIVATED) != <span class="number">0</span>) viewStateIndex |= StateSet.VIEW_STATE_ACTIVATED;</div><div class="line">    <span class="keyword">if</span> (mAttachInfo != <span class="keyword">null</span> &amp;&amp; mAttachInfo.mHardwareAccelerationRequested &amp;&amp;</div><div class="line">            HardwareRenderer.isAvailable()) &#123;</div><div class="line">        <span class="comment">// This is set if HW acceleration is requested, even if the current</span></div><div class="line">        <span class="comment">// process doesn't allow it.  This is just to allow app preview</span></div><div class="line">        <span class="comment">// windows to better match their app.</span></div><div class="line">        viewStateIndex |= StateSet.VIEW_STATE_ACCELERATED;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> ((privateFlags &amp; PFLAG_HOVERED) != <span class="number">0</span>) viewStateIndex |= StateSet.VIEW_STATE_HOVERED;</div><div class="line"></div><div class="line">    <span class="keyword">final</span> <span class="keyword">int</span> privateFlags2 = mPrivateFlags2;</div><div class="line">    <span class="keyword">if</span> ((privateFlags2 &amp; PFLAG2_DRAG_CAN_ACCEPT) != <span class="number">0</span>) &#123;</div><div class="line">        viewStateIndex |= StateSet.VIEW_STATE_DRAG_CAN_ACCEPT;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> ((privateFlags2 &amp; PFLAG2_DRAG_HOVERED) != <span class="number">0</span>) &#123;</div><div class="line">        viewStateIndex |= StateSet.VIEW_STATE_DRAG_HOVERED;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 将 viewStateIndex 变量中记录的各个状态转化为一个数组，具体如何转化可以看 StateSet.get 方法，这里不做延伸讨论。</span></div><div class="line">    drawableState = StateSet.get(viewStateIndex);</div><div class="line"></div><div class="line">    <span class="comment">// 如果参数 extraSpace 为 0，那么这个数组就是最终要返回的数组了。</span></div><div class="line">    <span class="keyword">if</span> (extraSpace == <span class="number">0</span>) &#123;</div><div class="line">        <span class="keyword">return</span> drawableState;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 如果 extraSpace 不为 0，那么会将 drawableState 数组的长度扩大 extraSpace 后返回。</span></div><div class="line">    <span class="keyword">final</span> <span class="keyword">int</span>[] fullState;</div><div class="line">    <span class="keyword">if</span> (drawableState != <span class="keyword">null</span>) &#123;</div><div class="line">        fullState = <span class="keyword">new</span> <span class="keyword">int</span>[drawableState.length + extraSpace];</div><div class="line">        System.arraycopy(drawableState, <span class="number">0</span>, fullState, <span class="number">0</span>, drawableState.length);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        fullState = <span class="keyword">new</span> <span class="keyword">int</span>[extraSpace];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> fullState;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>到此，我们从 View 的 pressed 状态改变开始，根据源码看完了 View 内部如何改变 backgroundDrawable 的状态。简单总结一下：</p>
+<ol>
+<li>View 的 pressed 状态改变会调用 <code>setPressed</code> 方法。</li>
+<li><code>setPressed</code> 方法会调用 <code>refreshDrawableState</code> 方法。</li>
+<li>在 <code>refreshDrawableState</code> 中会调用 <code>drawableStateChanged</code>，去更新 drawable 的状态，其中就包括 backgroundDrawable。</li>
+<li>在 <code>drawableStateChanged</code> 方法中，通过 <code>getDrawableState</code> 方法得到 DrawableState 并设置为 backgroundDrawable，那么 Drawable 就会自己更新状态并通知 View 重新绘制。</li>
+<li>而 <code>getDrawableState</code> 方法是通过 <code>onCreateDrawableState(int extraSpace)</code> 方法来得到 DrawableState 的。<br>所以，View 的 backgroundDrawable 状态其实是由 <code>onCreateDrawableState(int extraSpace)</code> 方法决定的，而 <code>setPressed</code> 方法只是作为状态改变的整个流程的起点。</li>
+</ol>
+<p>看完了源码，我们应该可以解决上面提出的几个问题：</p>
+<ol>
+<li><p>Button（View）的不同状态是如何和 Drawable 关联起来的？<br> View 在状态改变时调用 <code>refreshDrawableState</code> 去刷新 Drawable 的状态，而这些状态最终由 <code>onCreateDrawableState(int extraSpace)</code> 方法返回。</p>
+</li>
+<li><p>除了上面说的 pressed 和 enabled 状态，我们可以设置的状态还有哪些？<br> 见 <code>View#onCreateDrawableState(int extraSpace)</code> 方法，其中检查了 pressed、enabled、focused、selected、window_focused、activated、hardware_accelerated、hovered、drag_can_accept、drag_hovered 状态。所以，对于 View，我们可以控制这些状态。</p>
+</li>
+<li><p>如果系统提供的状态不够用，我们能否自己定义状态？<br> 当然可以，不可以的话我怎么会在这篇文章提出这个问题？其实 View 提供的状态很有限，而很多时候更底层的控件都需要定义更多状态栏满足特定的需求。接下来我们看自定义状态。</p>
+</li>
+</ol>
+<h2 id="自定义状态在系统控件中的使用"><a href="#自定义状态在系统控件中的使用" class="headerlink" title="自定义状态在系统控件中的使用"></a>自定义状态在系统控件中的使用</h2><p>我们先来看看系统控件自定义状态的做法。以 CheckBox 为例，CheckBox 是 View 的间接子类（两者中间还有好几层继承关系），提供了一个可勾选框的功能，它可以被 setChecked(boolean checked)，并在 checked 为 true/false 时有不同的表现，那么 CheckBox 是如何在 View 的基础上实现 checked 状态的？<br>搜一下 CheckBox 的 <code>setChecked</code> 方法，实际上这个方法在其父类 CompoundButton 实现。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setChecked</span><span class="params">(<span class="keyword">boolean</span> checked)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (mChecked != checked) &#123;</div><div class="line">        mChecked = checked;</div><div class="line">        refreshDrawableState();</div><div class="line">        <span class="comment">// 此处省略其他无关源代码...</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">// 该方法同样调用了 refreshDrawableState() 方法，且在这个类中没有重写 refreshDrawableState() 方法，说明接下来的代码流程会与上述流程一样。</span></div><div class="line"><span class="comment">// 但是这个类重写了 drawableStateChanged() 方法和 onCreateDrawableState(int extraSpace) 方法。</span></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">drawableStateChanged</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>.drawableStateChanged();</div><div class="line">    </div><div class="line">    <span class="comment">// 除了调用 super 的方法，还更新了自己持有的 mButtonDrawable 的状态</span></div><div class="line">    <span class="keyword">if</span> (mButtonDrawable != <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">int</span>[] myDrawableState = getDrawableState();</div><div class="line">        </div><div class="line">        <span class="comment">// Set the state of the Drawable</span></div><div class="line">        mButtonDrawable.setState(myDrawableState);</div><div class="line">        </div><div class="line">        invalidate();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">// 用数组保存了要自定义的状态的 resource ID，这里自定义了 *checked* 状态</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span>[] CHECKED_STATE_SET = &#123;</div><div class="line">	R.attr.state_checked</div><div class="line">&#125;;</div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="keyword">protected</span> <span class="keyword">int</span>[] onCreateDrawableState(<span class="keyword">int</span> extraSpace) &#123;</div><div class="line">    <span class="comment">// 调用 super 的方法时，extraSpace 参数加了 1，</span></div><div class="line">    <span class="comment">// 实际上这个 1 就是 CHECKED_STATE_SET.length，即自定义的状态的个数</span></div><div class="line">	<span class="keyword">final</span> <span class="keyword">int</span>[] drawableState = <span class="keyword">super</span>.onCreateDrawableState(extraSpace + <span class="number">1</span>);</div><div class="line">	<span class="keyword">if</span> (isChecked()) &#123;</div><div class="line">		 <span class="comment">// 如果当前状态是 checked，则把 super 返回的 drawableState 数组与 CHECKED_STATE_SET 数组合并，</span></div><div class="line">		 <span class="comment">// 合并的结果是在 super 返回的 drawableState 数组的基础上，往数组后面追加了 CHECKED_STATE_SET 数组的内容。</span></div><div class="line">		 <span class="comment">// 最后将数组返回。</span></div><div class="line">		mergeDrawableStates(drawableState, CHECKED_STATE_SET);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> drawableState;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>至此，就完成了对 checked 状态的自定义，并能通过 <code>setChecked(boolean checked)</code> 方法来改变 checked 状态。总结一下自定义状态需要做的几件事：</p>
+<ol>
+<li>提供一个改变 View 状态的方法，并在状态改变时调用 <code>refreshDrawableState()</code> 方法。</li>
+<li>在 <code>drawableStateChanged()</code> 方法中，调用自己维护的 Drawable 的 <code>setState</code> 方法，传入 <code>getDrawableState()</code> 返回的值，从而更新 Drawable 的状态。</li>
+<li>定义一个 int 数组，存放自定义的状态。</li>
+<li>在 <code>onCreateDrawableState(int extraSpace)</code> 方法中，调用 <code>super.onCreateDrawableState(int)</code>，传入 extraSpace 加上上述 int 数组的长度，并将 super 返回的结果与上述 int 数组用 <code>mergeDrawableStates()</code> 方法合并，最终返回合并后的结果。</li>
+</ol>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>看完原理和系统控件的例子，我们也可以来自定义View的状态了。假设我们要实现这样一个需求：有一个 ListView，它的每个 Item 左侧有一个 CheckBox 可对整个列表进行多选操作。<br>这种情况可以使用自定义状态来完成，Item 是否被 checked 将影响 Drawable 的表现，以下以 Item 的最外层 View 为 LinearLayout 为例，自定义一个 CheckableLinearLayout。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CheckableLinearLayout</span> <span class="keyword">extends</span> <span class="title">LinearLayout</span> <span class="keyword">implements</span> <span class="title">Checkable</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> mIsChecked = <span class="keyword">false</span>;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> Drawable mCheckboxDrawable;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span>[] CHECKED_STATE_SET = &#123;</div><div class="line">            android.R.attr.state_checked</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CheckableLinearLayout</span><span class="params">(Context context)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context);</div><div class="line">        init();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CheckableLinearLayout</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context, attrs);</div><div class="line">        init();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CheckableLinearLayout</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context, attrs, defStyleAttr);</div><div class="line">        init();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</div><div class="line">        mCheckboxDrawable = getResources().getDrawable(R.drawable.qmui_s_dialog_check_mark);</div><div class="line">        <span class="comment">// 恢复 ViewGroup 的 draw 功能（默认关闭），使 onDraw 方法会被调用</span></div><div class="line">        setWillNotDraw(<span class="keyword">false</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">drawableStateChanged</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.drawableStateChanged();</div><div class="line">        <span class="comment">// 将 getDrawableState 返回的状态数组设置给 mCheckboxDrawable，并触发重绘</span></div><div class="line">        <span class="keyword">if</span> (mCheckboxDrawable != <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">int</span>[] drawableState = getDrawableState();</div><div class="line">            mCheckboxDrawable.setState(drawableState);</div><div class="line">            invalidate();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="keyword">protected</span> <span class="keyword">int</span>[] onCreateDrawableState(<span class="keyword">int</span> extraSpace) &#123;</div><div class="line">        <span class="comment">// 调用 super 时参数加上状态集的长度</span></div><div class="line">        <span class="keyword">final</span> <span class="keyword">int</span>[] drawableState = <span class="keyword">super</span>.onCreateDrawableState(extraSpace + CHECKED_STATE_SET.length);</div><div class="line">        <span class="keyword">if</span> (isChecked()) &#123;</div><div class="line">            <span class="comment">// 被 checked 状态下，在 super 返回的数组上追加自己的状态集合</span></div><div class="line">            mergeDrawableStates(drawableState, CHECKED_STATE_SET);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> drawableState;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setChecked</span><span class="params">(<span class="keyword">boolean</span> checked)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (mIsChecked != checked) &#123;</div><div class="line">            mIsChecked = checked;</div><div class="line">            <span class="comment">// checked 状态改变时调用 refreshDrawableState()</span></div><div class="line">            refreshDrawableState();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isChecked</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mIsChecked;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">toggle</span><span class="params">()</span> </span>&#123;</div><div class="line">        setChecked(!isChecked());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDraw</span><span class="params">(Canvas canvas)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onDraw(canvas);</div><div class="line">        <span class="comment">// 将 mCheckboxDrawable 画到 Canvas 上</span></div><div class="line">        <span class="keyword">if</span> (mCheckboxDrawable != <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">int</span> left = QMUIDisplayHelper.dpToPx(<span class="number">5</span>);</div><div class="line">            mCheckboxDrawable.setBounds(left, getPaddingTop(),</div><div class="line">                    left + mCheckboxDrawable.getIntrinsicWidth(),</div><div class="line">                    getPaddingTop() + mCheckboxDrawable.getIntrinsicHeight());</div><div class="line">            mCheckboxDrawable.draw(canvas);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>以下是 <code>dialog_check_mark.xml</code> 文件的内容，设置了 normal 情况和 checked 情况下的不同表现。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- dialog_check_mark.xml --&gt;</span></div><div class="line">&lt;?xml version="1.0" encoding="utf-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">selector</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">android:drawable</span>=<span class="string">"@drawable/checkbox_checked"</span> <span class="attr">android:state_checked</span>=<span class="string">"true"</span> /&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">android:drawable</span>=<span class="string">"@drawable/checkbox_normal"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">selector</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>到此，就完成了对 LinearLayout 加上 Checked 状态管理的功能，在被调用 setCheck(boolean checked) 方法时，Drawable 的表现会随之改变。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们从 Button 被 pressed 时的源码入手，分析了 Button（View）和 Drawable 如何关联起来，状态改变时如何通知 Drawable 改变。接着分析了系统控件 CompoundButton 的状态管理。最后自定义了一个包含 Checked 状态的 LinearLayout。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/UI/" rel="tag">#UI</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/19/Android-横竖屏处理的知识小结/" rel="next" title="Android 横竖屏处理的知识小结">
+                <i class="fa fa-chevron-left"></i> Android 横竖屏处理的知识小结
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/30/Android-View-的-Touch-事件传递机制/" rel="prev" title="Android View 的 Touch 事件传递机制">
+                Android View 的 Touch 事件传递机制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Chant" />
+          <p class="site-author-name" itemprop="name">Chant</p>
+          <p class="site-description motion-element" itemprop="description">分享前端知识、Android开发知识</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何给-View-在不同状态下设置不同背景色"><span class="nav-number">1.</span> <span class="nav-text">如何给 View 在不同状态下设置不同背景色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原理"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义状态在系统控件中的使用"><span class="nav-number">3.</span> <span class="nav-text">自定义状态在系统控件中的使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实践"><span class="nav-number">4.</span> <span class="nav-text">实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chant</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

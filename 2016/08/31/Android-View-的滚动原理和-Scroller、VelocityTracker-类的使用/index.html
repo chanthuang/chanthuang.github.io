@@ -1,0 +1,642 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,UI," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Android 开发中经常涉及 View 的滚动，例如类似于 ScrollView 的滚动手势和滚动动画，例如用 ListView 模仿 iOS 上的左滑删除 item，例如 ListView 的下拉刷新。这些都是常见的需求，同时也都涉及 View 滚动的相关知识。
+本文将解析 Android 中 View 的滚动原理，并介绍与滚动相关的两个辅助类 Scroller 和 VelocityTrack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android View 的滚动原理和 Scroller、VelocityTracker 类的使用">
+<meta property="og:url" content="http://chanthuang.github.io/2016/08/31/Android-View-的滚动原理和-Scroller、VelocityTracker-类的使用/index.html">
+<meta property="og:site_name" content="Chant 的博客">
+<meta property="og:description" content="Android 开发中经常涉及 View 的滚动，例如类似于 ScrollView 的滚动手势和滚动动画，例如用 ListView 模仿 iOS 上的左滑删除 item，例如 ListView 的下拉刷新。这些都是常见的需求，同时也都涉及 View 滚动的相关知识。
+本文将解析 Android 中 View 的滚动原理，并介绍与滚动相关的两个辅助类 Scroller 和 VelocityTrack">
+<meta property="og:updated_time" content="2016-09-30T02:48:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android View 的滚动原理和 Scroller、VelocityTracker 类的使用">
+<meta name="twitter:description" content="Android 开发中经常涉及 View 的滚动，例如类似于 ScrollView 的滚动手势和滚动动画，例如用 ListView 模仿 iOS 上的左滑删除 item，例如 ListView 的下拉刷新。这些都是常见的需求，同时也都涉及 View 滚动的相关知识。
+本文将解析 Android 中 View 的滚动原理，并介绍与滚动相关的两个辅助类 Scroller 和 VelocityTrack">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://chanthuang.github.io/2016/08/31/Android-View-的滚动原理和-Scroller、VelocityTracker-类的使用/"/>
+
+  <title> Android View 的滚动原理和 Scroller、VelocityTracker 类的使用 | Chant 的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Chant 的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Android View 的滚动原理和 Scroller、VelocityTracker 类的使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-31T00:14:08+08:00" content="2016-08-31">
+              2016-08-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Android 开发中经常涉及 View 的滚动，例如类似于 ScrollView 的滚动手势和滚动动画，例如用 ListView 模仿 iOS 上的左滑删除 item，例如 ListView 的下拉刷新。这些都是常见的需求，同时也都涉及 View 滚动的相关知识。</p>
+<p>本文将解析 Android 中 View 的滚动原理，并介绍与滚动相关的两个辅助类 <code>Scroller</code> 和 <code>VelocityTracker</code>，并通过 3 个逐渐深入的例子来加深理解。<br><a id="more"></a></p>
+<p>注：</p>
+<ol>
+<li>本文没有尝试实现上述几种功能，只阐述基本原理和基础类的使用方法。</li>
+<li>文中的例子只是截取了与 View 相关的代码，完整的示例代码请见<a href="https://github.com/chanthuang/AndroidViewScrollerLab" target="_blank" rel="external">DEMO</a></li>
+<li>本文的源码分析基于 Android API Level 21，并省略掉部分与本文关系不大的代码。</li>
+</ol>
+<h2 id="View-的滚动原理"><a href="#View-的滚动原理" class="headerlink" title="View 的滚动原理"></a>View 的滚动原理</h2><p>在了解 View 的滚动原理之前，我们先来想象一个场景：我们坐在一个房间里，透过一扇窗户看窗外的风景。窗户是有大小限制的，而风景是没有大小限制的。</p>
+<p>把上述的场景对应到 Android 的 View 显示原理上来：当一个 View 显示在界面上，它的上下左右边缘就围成了这个 View 的可视区域，我们可以称这个区域为“可视窗口”，我们平时看到的 View 的内容，都是透过这个可视窗口中看到的“风景”。View 的大小内容可以无穷大，不受可视窗口大小的限制。</p>
+<p>另外，如果在窗外的风景中，有一个人出现在窗户右边很远的地方，那么我们在房间里就看不到那个人；如果那个人站在窗户正对着出去的地方，那么我们就可以透过窗户看到他。对应到 View 上面来，只有出现在“可视窗口”中的那部分内容可以被看到。</p>
+<h2 id="View-的-scroll-相关"><a href="#View-的-scroll-相关" class="headerlink" title="View 的 scroll 相关"></a>View 的 scroll 相关</h2><p>在 View 类中，有两个变量 <code>mScrollX</code> 和 <code>mScrollY</code>，它们记录的是 View 的内容的偏移值。<code>mScrollX</code> 和 <code>mScrollY</code> 的默认值都是 0，即默认不偏移。另外我们需要知道一点，向左滑动，<code>mScrollX</code> 为正数，反正为负数。假设我们令 <code>mScrollX = 10</code>，那么该 View 的内容会相对于原来向左偏移 10px。 看看系统的 View 类中的源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// View.java</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">View</span> </span>&#123;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">  * The offset, in pixels, by which the content of this view is scrolled</div><div class="line">  * horizontally.</div><div class="line">  * &#123;<span class="doctag">@hide</span>&#125;</div><div class="line">  */</div><div class="line">  <span class="keyword">protected</span> <span class="keyword">int</span> mScrollX;</div><div class="line">  </div><div class="line">  <span class="comment">/**</span></div><div class="line">  * The offset, in pixels, by which the content of this view is scrolled</div><div class="line">  * vertically.</div><div class="line">  * &#123;<span class="doctag">@hide</span>&#125;</div><div class="line">  */</div><div class="line">  <span class="keyword">protected</span> <span class="keyword">int</span> mScrollY;</div><div class="line">  </div><div class="line">  <span class="comment">// ...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 通常我们比较少直接设置 <code>mScrollX</code> 和 <code>mScrollY</code>，而是通过 View 提供的两个方法来设置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 瞬时滚动到某个位置</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">scrollTo</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span></span></div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 瞬时滚动某个距离</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">scrollBy</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span></span></div></pre></td></tr></table></figure>
+<p>看看两个方法的源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// View.java</span></div><div class="line"><span class="comment">/**</span></div><div class="line">* Set the scrolled position of your view. This will cause a call to</div><div class="line">* &#123;<span class="doctag">@link</span> #onScrollChanged(int, int, int, int)&#125; and the view will be</div><div class="line">* invalidated.</div><div class="line">* <span class="doctag">@param</span> x the x position to scroll to</div><div class="line">* <span class="doctag">@param</span> y the y position to scroll to</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">scrollTo</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (mScrollX != x || mScrollY != y) &#123;</div><div class="line">        <span class="keyword">int</span> oldX = mScrollX;</div><div class="line">        <span class="keyword">int</span> oldY = mScrollY;</div><div class="line">        mScrollX = x;</div><div class="line">        mScrollY = y;</div><div class="line">        invalidateParentCaches();</div><div class="line">        onScrollChanged(mScrollX, mScrollY, oldX, oldY);</div><div class="line">        <span class="keyword">if</span> (!awakenScrollBars()) &#123;</div><div class="line">            postInvalidateOnAnimation();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* Move the scrolled position of your view. This will cause a call to</div><div class="line">* &#123;<span class="doctag">@link</span> #onScrollChanged(int, int, int, int)&#125; and the view will be</div><div class="line">* invalidated.</div><div class="line">* <span class="doctag">@param</span> x the amount of pixels to scroll by horizontally</div><div class="line">* <span class="doctag">@param</span> y the amount of pixels to scroll by vertically</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">scrollBy</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</div><div class="line">    scrollTo(mScrollX + x, mScrollY + y);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先看 <code>scrollTo(int x, int y)</code> 方法，它除了设置 <code>mScrollX</code> 和 <code>mScrollY</code> 两个变量，还会触发自己重新绘制，另外还会通过 <code>onScrollChanged</code> 触发回调。而 <code>scrollBy</code> 方法其实也是调用 <code>scrollTo</code> 方法。</p>
+<p>明显，两个方法的区别在于 <code>scrollTo</code> 方法是滚动到特定位置，参数 <code>x</code>、<code>y</code> 代表“绝对位置”，而 <code>scrollBy</code> 方法是在当前位置基础上滚动特定距离，参数 <code>x</code>、<code>y</code> 代表“相对位置”。</p>
+<p>另外，View 还提供了 <code>mScrollX</code> 和 <code>mScrollY</code> 的 getter：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 获取 mScrollX</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getScrollX</span><span class="params">()</span></span></div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 获取 mScrollY</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getScrollY</span><span class="params">()</span></span></div></pre></td></tr></table></figure>
+<p>看看源码中这两个方法的注释，可以更好地理解 scroll 的概念。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// View.java</span></div><div class="line"><span class="comment">/**</span></div><div class="line">* Return the scrolled left position of this view. This is the left edge of</div><div class="line">* the displayed part of your view. You do not need to draw any pixels</div><div class="line">* farther left, since those are outside of the frame of your view on</div><div class="line">* screen.</div><div class="line">*</div><div class="line">* <span class="doctag">@return</span> The left edge of the displayed part of your view, in pixels.</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getScrollX</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> mScrollX;</div><div class="line">&#125;</div><div class="line"><span class="comment">/**</span></div><div class="line">* Return the scrolled top position of this view. This is the top edge of</div><div class="line">* the displayed part of your view. You do not need to draw any pixels above</div><div class="line">* it, since those are outside of the frame of your view on screen.</div><div class="line">*</div><div class="line">* <span class="doctag">@return</span> The top edge of the displayed part of your view, in pixels.</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getScrollY</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> mScrollY;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="例子1"><a href="#例子1" class="headerlink" title="例子1"></a>例子1</h2><p>为了更好地理解 <code>mScrollX</code> 和 <code>mScrollY</code>，也为后续介绍的知识做准备，我们先看一个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">* 示例：自定义 ViewGroup，包含几个一字排开的子 View，</div><div class="line"></div><div class="line">* 每个子 View 都与该 ViewGroup 一样大。</div><div class="line">* 调用 moveToIndex 方法会调用 scrollTo 方法，从而瞬时滚动到某一位置</div><div class="line">*/</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Case1ViewGroup</span> <span class="keyword">extends</span> <span class="title">ViewGroup</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CHILD_NUMBER = <span class="number">6</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mCurrentIndex = <span class="number">0</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Case1ViewGroup</span><span class="params">(Context context)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context);</div><div class="line">        init();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Case1ViewGroup</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context, attrs);</div><div class="line">        init();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Case1ViewGroup</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context, attrs, defStyleAttr);</div><div class="line">        init();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="comment">// 添加几个子 View</span></div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; CHILD_NUMBER; i++) &#123;</div><div class="line">            TextView child = <span class="keyword">new</span> TextView(getContext());</div><div class="line">            <span class="keyword">int</span> color;</div><div class="line">            <span class="keyword">switch</span> (i % <span class="number">3</span>) &#123;</div><div class="line">                <span class="keyword">case</span> <span class="number">0</span>:</div><div class="line">                    color = <span class="number">0xffcc6666</span>;</div><div class="line">                    <span class="keyword">break</span>;</div><div class="line">                <span class="keyword">case</span> <span class="number">1</span>:</div><div class="line">                    color = <span class="number">0xffcccc66</span>;</div><div class="line">                    <span class="keyword">break</span>;</div><div class="line">                <span class="keyword">case</span> <span class="number">2</span>:</div><div class="line">                <span class="keyword">default</span>:</div><div class="line">                    color = <span class="number">0xff6666cc</span>;</div><div class="line">                    <span class="keyword">break</span>;</div><div class="line">            &#125;</div><div class="line">            child.setBackgroundColor(color);</div><div class="line">            child.setGravity(Gravity.CENTER);</div><div class="line">            child.setTextSize(TypedValue.COMPLEX_UNIT_SP, <span class="number">46</span>);</div><div class="line">            child.setTextColor(<span class="number">0x80ffffff</span>);</div><div class="line">            child.setText(String.valueOf(i));</div><div class="line">            addView(child);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</div><div class="line">        <span class="keyword">int</span> width = MeasureSpec.getSize(widthMeasureSpec);</div><div class="line">        <span class="keyword">int</span> height = MeasureSpec.getSize(heightMeasureSpec);</div><div class="line"></div><div class="line">        <span class="comment">// 每个子 View 都与自己一样大</span></div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>, childCount = getChildCount(); i &lt; childCount; i++) &#123;</div><div class="line">            View childView = getChildAt(i);</div><div class="line">            childView.measure(</div><div class="line">                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),</div><div class="line">                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        setMeasuredDimension(width, height);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onLayout</span><span class="params">(<span class="keyword">boolean</span> changed, <span class="keyword">int</span> l, <span class="keyword">int</span> t, <span class="keyword">int</span> r, <span class="keyword">int</span> b)</span> </span>&#123;</div><div class="line">        <span class="comment">// 子 View 一字排开</span></div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>, childCount = getChildCount(); i &lt; childCount; i++) &#123;</div><div class="line">            View childView = getChildAt(i);</div><div class="line">            childView.layout(getWidth() * i, <span class="number">0</span>, getWidth() * (i + <span class="number">1</span>), b - t);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">    * 瞬时滚动到第几个子 View</div><div class="line">    * <span class="doctag">@param</span> targetIndex 要移动到第几个子 View</div><div class="line">    */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">moveToIndex</span><span class="params">(<span class="keyword">int</span> targetIndex)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (!canMoveToIndex(targetIndex)) &#123;</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line">        scrollTo(targetIndex * getWidth(), getScrollY());</div><div class="line">        mCurrentIndex = targetIndex;</div><div class="line">        invalidate();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">    * 判断移动的子 View 下标是否合法</div><div class="line">    * <span class="doctag">@param</span> index 要移动到第几个子 View</div><div class="line">    * <span class="doctag">@return</span> index 是否合法</div><div class="line">    */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">canMoveToIndex</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> index &lt; CHILD_NUMBER &amp;&amp; index &gt;= <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCurrentIndex</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mCurrentIndex;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>将以上这个自定义的 ViewGroup 放到 Activity 中，调用它的 <code>moveToIndex(int targetIndex)</code> 就可以实现瞬时滚动到第 n 个子 View 了。（完整示例代码见<a href="https://github.com/chanthuang/AndroidViewScrollerLab" target="_blank" rel="external">DEMO</a>）</p>
+<h2 id="Scroller-类-——-计算滚动位置的辅助类"><a href="#Scroller-类-——-计算滚动位置的辅助类" class="headerlink" title="Scroller 类 —— 计算滚动位置的辅助类"></a>Scroller 类 —— 计算滚动位置的辅助类</h2><p>到目前为止，我们已经能通过 View 提供的方法设置 <code>mScrollX</code>、<code>mScrollY</code>，来使 View “滚动”。但这种滚动都是瞬时的，换句话说，这种滚动都是无动画的。实际上我们想要做到的滚动是平滑的、有动画的，就像我们不希望窗户外面的那个人突然出现在窗户中间，这样会吓到我们，我们更希望那个人能有一个“慢慢走进视觉范围”的过程。</p>
+<p>Scroller 类就是帮助我们实现 View 平滑滚动的一个辅助类，使用方法通常是在 View 中作为一个成员变量，用 Scroller 类来记录/计算 View 的滚动位置，再从 Scroller 类中读取出计算结果，设置到 View 中。这里注意一点：在 Scroller 中设置和计算 View 的滚动位置并不会影响 View 的滚动，只有从 Scroller 中取出计算结果并设置到 View 中时，滚动才会实际生效。</p>
+<p>Scroller 提供了一系列方法来执行滚动、计算滚动位置，以下列出几个重要方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 开始滚动，并记下当前时间点作为开始滚动的时间点</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startScroll</span><span class="params">(<span class="keyword">int</span> startX, <span class="keyword">int</span> startY, <span class="keyword">int</span> dx, <span class="keyword">int</span> dy, <span class="keyword">int</span> duration)</span></span></div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 停止滚动</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">abortAnimation</span><span class="params">()</span></span></div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 计算当前时间点对应的滚动位置，并返回动画是否还在进行</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">computeScrollOffset</span><span class="params">()</span></span></div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 获取上一次 computeScrollOffset 执行时的滚动 x 值</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getCurrX</span><span class="params">()</span></span></div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 获取上一次 computeScrollOffset 执行时的滚动 y 值</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getCurrY</span><span class="params">()</span></span></div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 根据当前的时间点，判断动画是否已结束</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">isFinished</span><span class="params">()</span></span></div></pre></td></tr></table></figure>
+<p>有了这几个方法，我们容易想到如何实现 View 的平滑滚动动画：</p>
+<ul>
+<li>在开始动画时调用 <code>startScroll</code> 方法，传入动画开始位置、移动距离、动画时长；</li>
+<li>每隔一段时间，调用 <code>computeScrollOffset</code> 方法，计算当前时间点对应的滚动位置；</li>
+<li>如果上一步返回 true，代表动画仍在进行，则调用 <code>getCurrX</code> 和 <code>getCurrY</code> 方法获取当前位置，并调用 View 的 <code>scrollTo</code> 方法使 View 滚动；</li>
+<li>不断循环进行第 2 步，直到返回 false，代表动画结束。</li>
+</ul>
+<p>这里提到“每隔一段时间”，从直觉上我们可能觉得应该有个循环，但实际上我们可以借助 View 的 <code>computeScroll</code> 方法来实现。先看看 <code>computeScroll</code> 方法的源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// View.java</span></div><div class="line"><span class="comment">/**</span></div><div class="line">* Called by a parent to request that a child update its values for mScrollX</div><div class="line">* and mScrollY if necessary. This will typically be done if the child is</div><div class="line">* animating a scroll using a &#123;<span class="doctag">@link</span> android.widget.Scroller Scroller&#125;</div><div class="line">* object.</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">computeScroll</span><span class="params">()</span> </span>&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>看注释可知该方法天生就是用来计算 View 的 <code>mScrollX</code> 和 <code>mScrollY</code> 值，该方法会在父 View 调用该 View 的 draw 方法之前被自动调用，View 类中默认没有实现任何内容，我们需要自己实现。所以我们只需要在该方法中，用 Scroller 计算并设置 <code>mScrollX</code> 和 <code>mScrollY</code> 的值，并判断如果动画没结束则让该 View 失效（调用 <code>postInvalidate()</code> 方法），触发下一次 <code>computeScroll</code>，就可以实现上述循环。</p>
+<h2 id="例子2"><a href="#例子2" class="headerlink" title="例子2"></a>例子2</h2><p>这个例子的 ViewGroup 继承自例子 1 的 ViewGroup，拥有同样的子 View，区别只在于例子 2 是通过 Scroller 来滚动，实现了滚动的动画，而不再是瞬时滚动。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">* 示例：自定义一个 ViewGroup，包含几个一字排开的子 View，</div><div class="line"></div><div class="line">* 每个子 View 都与该 ViewGroup 一样大。</div><div class="line">* 通过 Scroller 实现滚动。</div><div class="line">* 调用 moveToIndex 方法会触发 Scroller 的 startScroller，开始动画，并使 View 失效。</div><div class="line">* 并在 computeScroll 方法中判断动画是否在进行，进而计算当前滚动位置，并触发下一次 View 失效。</div><div class="line">*/</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Case2ViewGroup</span> <span class="keyword">extends</span> <span class="title">Case1ViewGroup</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">// 滚动器</span></div><div class="line">    <span class="keyword">protected</span> Scroller mScroller;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Case2ViewGroup</span><span class="params">(Context context)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context);</div><div class="line">        initScroller();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Case2ViewGroup</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context, attrs);</div><div class="line">        initScroller();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Case2ViewGroup</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context, attrs, defStyleAttr);</div><div class="line">        initScroller();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initScroller</span><span class="params">()</span> </span>&#123;</div><div class="line">        mScroller = <span class="keyword">new</span> Scroller(getContext());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">    * 通过动画滚动到第几个子 View</div><div class="line">    * <span class="doctag">@param</span> targetIndex 要移动到第几个子 View</div><div class="line">    */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">moveToIndex</span><span class="params">(<span class="keyword">int</span> targetIndex)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (!canMoveToIndex(targetIndex)) &#123;</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line">        mScroller.startScroll(</div><div class="line">                getScrollX(), getScrollY(),</div><div class="line">                targetIndex * getWidth() - getScrollX(), getScrollY());</div><div class="line">        mCurrentIndex = targetIndex;</div><div class="line">        invalidate();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stopMove</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (!mScroller.isFinished()) &#123;</div><div class="line">            <span class="keyword">int</span> currentX = mScroller.getCurrX();</div><div class="line">            <span class="keyword">int</span> targetIndex = (currentX + getWidth() / <span class="number">2</span>) / getWidth();</div><div class="line">            mScroller.abortAnimation();</div><div class="line">            <span class="keyword">this</span>.scrollTo(targetIndex * getWidth(), <span class="number">0</span>);</div><div class="line">            mCurrentIndex = targetIndex;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">    * 在 ViewGroup.dispatchDraw() -&gt; ViewGroup.drawChild() -&gt; View.draw(Canvas,ViewGroup,long) 时被调用</div><div class="line">    * 任务：计算 mScrollX &amp; mScrollY 应有的值，然后调用scrollTo/scrollBy</div><div class="line">    */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">computeScroll</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">boolean</span> isNotFinished = mScroller.computeScrollOffset();</div><div class="line">        <span class="keyword">if</span> (isNotFinished) &#123;</div><div class="line">            scrollTo(mScroller.getCurrX(), mScroller.getCurrY());</div><div class="line">            postInvalidate();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>将以上这个自定义的 ScrollerViewGroup 放到 Activity 中，调用它的 <code>moveToIndex(int targetIndex)</code> 就可以实现滚动到第 n 个子 View 了。（在 Activity 中使用的完整示例代码见<a href="https://github.com/chanthuang/AndroidViewScrollerLab" target="_blank" rel="external">DEMO</a>）</p>
+<h2 id="VelocityTracker-——-计算滚动速度的辅助类"><a href="#VelocityTracker-——-计算滚动速度的辅助类" class="headerlink" title="VelocityTracker —— 计算滚动速度的辅助类"></a>VelocityTracker —— 计算滚动速度的辅助类</h2><p>到目前为止，我们已经可以实现 View 平滑的滚动动画，那么如果我们还想根据用户手指在 View 上滑动的速度和距离来控制 View 的滚动，应该怎么做？Android 系统提供了另一个辅助类 VelocityTracker 来实现类似功能。</p>
+<p>VelocityTracker 是一个速度跟踪器，通过用户操作时（通常在 View 的 onTouchEvent 方法中）传进去一系列的 Event，该类就可以计算出用户手指滑动的速度，开发者可以方便地获取这些参数去做其他事情。或者手指滑动超过一定速度并松手，就触发翻页。</p>
+<p>看看 VelocityTracker 类提供的几个常用的方法，这些方法分为几类：</p>
+<ul>
+<li><p>初始化和销毁：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 由系统分配一个 VelocityTracker 对象，而不是 new 一个</span></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">public</span> VelocityTracker <span class="title">obtain</span><span class="params">()</span></span></div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">- <span class="comment">// 使用完毕时调用该方法回收 VelocityTracker 对象</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">recycle</span><span class="params">()</span></span></div></pre></td></tr></table></figure>
+</li>
+<li><p>添加 Event 以供追踪：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 不断调用该方法传入一系列 event，记录用户的操作</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addMovement</span><span class="params">(MotionEvent event)</span></span></div></pre></td></tr></table></figure>
+</li>
+<li><p>计算速度：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 计算调用该方法的时刻对应的速度，传入的是速度的计时单位</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">computeCurrentVelocity</span><span class="params">(<span class="keyword">int</span> units)</span></span></div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 调用 computeCurrentVelocity 方法后就可以通过该方法获取之前计算的 x 方向速度</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">getXVelocity</span><span class="params">()</span></span></div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 调用 computeCurrentVelocity 方法后就可以通过该方法获取之前计算的 y 方向速度</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">getYVelocity</span><span class="params">()</span></span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="例子3"><a href="#例子3" class="headerlink" title="例子3"></a>例子3</h2><p>下面通过一个例子来看看 VelocityTracker 的用法。该例子的 ViewGroup 继承自例子 2 的 ViewGroup，拥有同样的子 View，区别在于除了可以用动画来滚动，还可以用手势来拖动滚动。重点看该 ViewGroup 的 onTouchEvent 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">* 示例：自定义一个 ViewGroup，包含几个一字排开的子 View，</div><div class="line"></div><div class="line">* 每个子 View 都与该 ViewGroup 一样大。</div><div class="line">* 通过 VelocityTracker 监控手指滑动速度。</div><div class="line">*/</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Case3ViewGroup</span> <span class="keyword">extends</span> <span class="title">Case2ViewGroup</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">// 速度监控器</span></div><div class="line">    <span class="keyword">private</span> VelocityTracker mVelocityTracker;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Case3ViewGroup</span><span class="params">(Context context)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Case3ViewGroup</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context, attrs);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Case3ViewGroup</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(context, attrs, defStyleAttr);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 非滑动状态</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TOUCH_STATE_REST = <span class="number">0</span>;</div><div class="line">    <span class="comment">// 滑动状态</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TOUCH_STATE_SCROLLING = <span class="number">1</span>;</div><div class="line">    <span class="comment">// 表示当前状态</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mTouchState = TOUCH_STATE_REST;</div><div class="line"></div><div class="line">    <span class="comment">// 上一次事件的位置</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> mLastMotionX;</div><div class="line">    <span class="comment">// 触发滚动的最小滑动距离，手指滑动超过该距离才认为是要拖动，防止手抖</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();</div><div class="line">    <span class="comment">// 最小滑动速率，手指滑动超过该速度时才会触发翻页</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> VELOCITY_MIN = <span class="number">600</span>;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onInterceptTouchEvent</span><span class="params">(MotionEvent ev)</span> </span>&#123;</div><div class="line">        <span class="keyword">final</span> <span class="keyword">int</span> action = ev.getAction();</div><div class="line"></div><div class="line">        <span class="comment">//表示已经开始滑动了，不需要走该 ACTION_MOVE 方法了。</span></div><div class="line">        <span class="keyword">if</span> ((action == MotionEvent.ACTION_MOVE) &amp;&amp; (mTouchState != TOUCH_STATE_REST)) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">final</span> <span class="keyword">float</span> x = ev.getX();</div><div class="line"></div><div class="line">        <span class="keyword">switch</span> (action) &#123;</div><div class="line">            <span class="keyword">case</span> MotionEvent.ACTION_DOWN:</div><div class="line">                mLastMotionX = x;</div><div class="line">                mTouchState = mScroller.isFinished() ? TOUCH_STATE_REST : TOUCH_STATE_SCROLLING;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line"></div><div class="line">            <span class="keyword">case</span> MotionEvent.ACTION_MOVE:</div><div class="line">                <span class="keyword">final</span> <span class="keyword">int</span> xDiff = (<span class="keyword">int</span>) Math.abs(mLastMotionX - x);</div><div class="line">                <span class="comment">//超过了最小滑动距离，就可以认为开始滑动了</span></div><div class="line">                <span class="keyword">if</span> (xDiff &gt; mTouchSlop) &#123;</div><div class="line">                    mTouchState = TOUCH_STATE_SCROLLING;</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line"></div><div class="line">            <span class="keyword">case</span> MotionEvent.ACTION_CANCEL:</div><div class="line">            <span class="keyword">case</span> MotionEvent.ACTION_UP:</div><div class="line">                mTouchState = TOUCH_STATE_REST;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> mTouchState != TOUCH_STATE_REST;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onTouchEvent(event);</div><div class="line"></div><div class="line">        <span class="comment">// 速度监控器，监控每一个 event</span></div><div class="line">        <span class="keyword">if</span> (mVelocityTracker == <span class="keyword">null</span>) &#123;</div><div class="line">            mVelocityTracker = VelocityTracker.obtain();</div><div class="line">        &#125;</div><div class="line">        mVelocityTracker.addMovement(event);</div><div class="line"></div><div class="line">        <span class="comment">// 触摸点</span></div><div class="line">        <span class="keyword">final</span> <span class="keyword">float</span> eventX = event.getX();</div><div class="line"></div><div class="line">        <span class="keyword">switch</span> (event.getAction()) &#123;</div><div class="line">            <span class="keyword">case</span> MotionEvent.ACTION_DOWN:</div><div class="line"></div><div class="line">                <span class="comment">// 如果滚动未结束时按下，则停止滚动</span></div><div class="line">                <span class="keyword">if</span> (!mScroller.isFinished()) &#123;</div><div class="line">                    mScroller.abortAnimation();</div><div class="line">                &#125;</div><div class="line">                <span class="comment">// 记录按下位置</span></div><div class="line">                mLastMotionX = eventX;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> MotionEvent.ACTION_MOVE:</div><div class="line">                <span class="comment">// 手指移动的位移</span></div><div class="line">                <span class="keyword">int</span> deltaX = (<span class="keyword">int</span>)(eventX - mLastMotionX);</div><div class="line">                <span class="comment">// 滚动内容，前提是不超出边界</span></div><div class="line">                <span class="keyword">int</span> targetScrollX = getScrollX() - deltaX;</div><div class="line">                <span class="keyword">if</span> (targetScrollX &gt;= <span class="number">0</span> &amp;&amp;</div><div class="line">                        targetScrollX &lt;= getWidth() * (CHILD_NUMBER - <span class="number">1</span>)) &#123;</div><div class="line">                    scrollTo(targetScrollX, <span class="number">0</span>);</div><div class="line">                &#125;</div><div class="line">                <span class="comment">// 记下手指的新位置</span></div><div class="line">                mLastMotionX = eventX;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> MotionEvent.ACTION_UP:</div><div class="line">                <span class="comment">// 计算速度</span></div><div class="line">                mVelocityTracker.computeCurrentVelocity(<span class="number">1000</span>);</div><div class="line">                <span class="keyword">float</span> velocityX = mVelocityTracker.getXVelocity();</div><div class="line">                <span class="keyword">if</span> (velocityX &gt; VELOCITY_MIN &amp;&amp; canMoveToIndex(getCurrentIndex() - <span class="number">1</span>)) &#123;</div><div class="line">                    <span class="comment">// 自动向右边继续滑动</span></div><div class="line">                    moveToIndex(getCurrentIndex() - <span class="number">1</span>);</div><div class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (velocityX &lt; -VELOCITY_MIN &amp;&amp; canMoveToIndex(getCurrentIndex() + <span class="number">1</span>)) &#123;</div><div class="line">                    <span class="comment">// 自动向左边继续滑动</span></div><div class="line">                    moveToIndex(getCurrentIndex() + <span class="number">1</span>);</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    <span class="comment">// 手指速度不够或不允许再滑</span></div><div class="line"></div><div class="line">                    <span class="keyword">int</span> targetIndex = (getScrollX() + getWidth() / <span class="number">2</span>) / getWidth();</div><div class="line">                    moveToIndex(targetIndex);</div><div class="line">                &#125;</div><div class="line">                <span class="comment">// 回收速度监控器</span></div><div class="line">                <span class="keyword">if</span> (mVelocityTracker != <span class="keyword">null</span>) &#123;</div><div class="line">                    mVelocityTracker.recycle();</div><div class="line">                    mVelocityTracker = <span class="keyword">null</span>;</div><div class="line">                &#125;</div><div class="line">                <span class="comment">//修正 mTouchState 值</span></div><div class="line">                mTouchState = TOUCH_STATE_REST;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> MotionEvent.ACTION_CANCEL:</div><div class="line">                mTouchState = TOUCH_STATE_REST;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在该例子中，在 View 的 <code>onTouchEvent</code> 方法中，在 <code>ACTION_MOVE</code> 手指移动中不断调用 <code>scrollTo</code> 方法，实现 View 跟随手指移动；同时，将 Event 不断地添加到 <code>mVelocityTracker</code> 速度监控器中，并在 <code>ACTION_UP</code> 手指抬起时从速度监控器中获取速度，当速度达到某一阈值时自动滚动到上一页或下一页。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>至此，我们已经了解了 View 的滚动原理，并两个辅助类来帮助控制 View 的滚动位置和滚动速度。总结一下：</p>
+<ul>
+<li>View 的显示可以理解为透过“视觉窗口”来看内容，内容可以无限大，改变 View 的 <code>mScrollX</code> 和 <code>mScrollY</code> 可以看到不同的内容，实现瞬时滚动。</li>
+<li>调用 View 的 <code>scrollTo</code> 或 <code>scrollBy</code> 方法可以瞬时滚动 View。</li>
+<li>Scroller 辅助类可以协助实现 View 的滚动动画，实现方法是：调用 <code>startScroll</code> 方法开始滚动，并在 View 的 <code>computeScroll</code> 方法中不断改变 <code>mScrollX</code> 和 <code>mScrollY</code> 来滚动 View。</li>
+<li>VelocityTracker 辅助类可以协助追踪 View 的滚动速度，通常是在 View 的 <code>onTouchEvent</code> 方法中将 Event 传进该类中来追踪。调用该类的 <code>computeCurrentVelocity</code> 方法之后，就可以调用 <code>getXVelocity</code> 和 <code>getYVelocity</code> 方法分别获取 x 方向和 y 方向的速度。</li>
+</ul>
+<p>有了上述的知识和工具后，我们就能实现很多与滚动相关的效果，例如本文开头提到的几个场景，后续再写些 DEMO 作为分享。</p>
+<p>以上，感谢阅读。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/UI/" rel="tag">#UI</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/30/Android-View-的-Touch-事件传递机制/" rel="next" title="Android View 的 Touch 事件传递机制">
+                <i class="fa fa-chevron-left"></i> Android View 的 Touch 事件传递机制
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/07/java-autoboxing-and-unboxing/" rel="prev" title="Java 的自动装箱(autoboxing)与拆箱(unboxing)">
+                Java 的自动装箱(autoboxing)与拆箱(unboxing) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Chant" />
+          <p class="site-author-name" itemprop="name">Chant</p>
+          <p class="site-description motion-element" itemprop="description">分享前端知识、Android开发知识</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#View-的滚动原理"><span class="nav-number">1.</span> <span class="nav-text">View 的滚动原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#View-的-scroll-相关"><span class="nav-number">2.</span> <span class="nav-text">View 的 scroll 相关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#例子1"><span class="nav-number">3.</span> <span class="nav-text">例子1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Scroller-类-——-计算滚动位置的辅助类"><span class="nav-number">4.</span> <span class="nav-text">Scroller 类 —— 计算滚动位置的辅助类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#例子2"><span class="nav-number">5.</span> <span class="nav-text">例子2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VelocityTracker-——-计算滚动速度的辅助类"><span class="nav-number">6.</span> <span class="nav-text">VelocityTracker —— 计算滚动速度的辅助类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#例子3"><span class="nav-number">7.</span> <span class="nav-text">例子3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">8.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chant</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

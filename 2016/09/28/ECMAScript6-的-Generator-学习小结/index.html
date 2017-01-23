@@ -1,0 +1,599 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ECMAScript6," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Generator 是 ECMAScript6 提供的新特性之一，最大的特点是可以在其内部暂停执行。它可以用来生成一个迭代器。通过迭代器器不断往下执行，我们可以让代码在 Generator 内部暂停或继续执行。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ECMAScript6 的 Generator 学习小结">
+<meta property="og:url" content="http://chanthuang.github.io/2016/09/28/ECMAScript6-的-Generator-学习小结/index.html">
+<meta property="og:site_name" content="Chant 的博客">
+<meta property="og:description" content="Generator 是 ECMAScript6 提供的新特性之一，最大的特点是可以在其内部暂停执行。它可以用来生成一个迭代器。通过迭代器器不断往下执行，我们可以让代码在 Generator 内部暂停或继续执行。">
+<meta property="og:updated_time" content="2016-09-30T02:48:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ECMAScript6 的 Generator 学习小结">
+<meta name="twitter:description" content="Generator 是 ECMAScript6 提供的新特性之一，最大的特点是可以在其内部暂停执行。它可以用来生成一个迭代器。通过迭代器器不断往下执行，我们可以让代码在 Generator 内部暂停或继续执行。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://chanthuang.github.io/2016/09/28/ECMAScript6-的-Generator-学习小结/"/>
+
+  <title> ECMAScript6 的 Generator 学习小结 | Chant 的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Chant 的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                ECMAScript6 的 Generator 学习小结
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-28T23:03:34+08:00" content="2016-09-28">
+              2016-09-28
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Generator 是 ECMAScript6 提供的新特性之一，最大的特点是可以在其内部暂停执行。它可以用来生成一个迭代器。通过迭代器器不断往下执行，我们可以让代码在 Generator 内部暂停或继续执行。</p>
+<a id="more"></a>
+<h2 id="什么是-Generator"><a href="#什么是-Generator" class="headerlink" title="什么是 Generator"></a>什么是 Generator</h2><p>Generator 函数的形式类似于一个普通函数，但其语法看上去与普通函数有以下区别。</p>
+<ul>
+<li>function 关键字与函数名之间有一个星号；</li>
+<li>函数体内部可以使用 <code>yield</code> 和 <code>yield*</code> 关键字定义迭代器的每个成员。</li>
+</ul>
+<p>Generator 的行为也与普通函数不一样：</p>
+<ul>
+<li>执行 Generator 函数会返回一个迭代器对象，而不是执行它的函数体内容。</li>
+<li>它所生成的迭代器对象可以分段地执行 Generator 的函数体。</li>
+</ul>
+<p>看个例子：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">numberGenerator</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">yield</span> <span class="number">1</span>;</div><div class="line">    <span class="keyword">yield</span> <span class="number">2</span>;</div><div class="line">    <span class="keyword">return</span> <span class="number">3</span>;</div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> numbers = numberGenerator();</div><div class="line">numbers.next(); <span class="comment">// 输出：&#123; value: 1, done: false &#125;</span></div><div class="line">numbers.next(); <span class="comment">// 输出：&#123; value: 2, done: false &#125;</span></div><div class="line">numbers.next(); <span class="comment">// 输出：&#123; value: 3, done: true &#125;</span></div></pre></td></tr></table></figure></p>
+<ol>
+<li>这段代码定义了一个 Generator，然后像一个函数一样调用它。</li>
+<li>注意调用它时不会立即执行其内部代码，只会得到一个迭代器（numbers）。</li>
+<li>在此之后每次调用迭代器的 <code>next()</code> 方法，就从函数体的开头（第一次调用 <code>next()</code> 方法时）或上一次停下来的地方（第二次或之后调用 <code>next()</code> 方法时）继续执行，直到遇到下一个 <code>yield</code> 语句停止。</li>
+<li>每一次执行 <code>next()</code> 方法都返回一个对象，对象的 value 属性就是当前 <code>yield</code> 语句后面的表达式的值，done 属性表示迭代器是否已经遍历结束。</li>
+<li>不用 <code>yield</code> 语句的 Generator，就是一个普通的暂缓执行函数，因为调用一次 <code>next()</code> 就相当于执行函数。</li>
+</ol>
+<h2 id="遍历迭代器"><a href="#遍历迭代器" class="headerlink" title="遍历迭代器"></a>遍历迭代器</h2><p>既然 Generator 函数调用时返回的结果是一个迭代器对象，那么除了可以调用连续它的 <code>next()</code> 方法来遍历它之外，我们也可以用 <code>for of</code> 来遍历这个迭代器对象。例如：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">getNumbers</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">yield</span> <span class="number">1</span>;</div><div class="line">    <span class="keyword">yield</span> <span class="number">2</span>;</div><div class="line">    <span class="keyword">yield</span> <span class="number">3</span>;</div><div class="line">&#125;</div><div class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">of</span> getNumbers()) &#123;</div><div class="line">    <span class="built_in">console</span>.log(i);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这段代码会依次输出 1,2,3。</p>
+<h2 id="yield-和-yield"><a href="#yield-和-yield" class="headerlink" title="yield 和 yield*"></a>yield 和 yield*</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">getDelegate</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">yield</span> <span class="number">2</span>;</div><div class="line">    <span class="keyword">yield</span> <span class="number">3</span>;</div><div class="line">    <span class="keyword">yield</span> <span class="number">4</span>;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">getNumbers</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">yield</span> <span class="number">1</span>;</div><div class="line">    <span class="keyword">yield</span>* getDelegate();</div><div class="line">    <span class="keyword">yield</span> <span class="number">5</span>;</div><div class="line">&#125;</div><div class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">of</span> getNumbers()) &#123;</div><div class="line">    <span class="built_in">console</span>.log(i);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段代码会依次输出 1,2,3,4,5。<br><code>yield</code> 后面可以跟任何表达式，表达式的值将作为迭代器调用 <code>next()</code> 时的返回对象中的 value 属性值。<br><code>yield*</code> 后面只能跟一个另一个迭代器，效果相当于遍历该迭代器。可以理解为，当执行 <code>next()</code> 函数遇到了 <code>yield*</code> 语句时，执行权限被交给了 <code>yield*</code> 后面那个迭代器，当这个迭代器执行完（即done==false）时，执行权限又被交回来。</p>
+<p>由于数组本来就支持迭代器遍历，所以 <code>yield*</code> 后面可以跟一个数据。例如：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">getNumbers</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">yield</span> <span class="number">1</span>;</div><div class="line">    <span class="keyword">yield</span>* [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>];</div><div class="line">    <span class="keyword">yield</span> <span class="number">5</span>;</div><div class="line">&#125;</div><div class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">of</span> getNumbers()) &#123;</div><div class="line">    <span class="built_in">console</span>.log(i);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 依次输出 1,2,3,4,5</span></div></pre></td></tr></table></figure></p>
+<h2 id="yield-语句的值和-next-方法"><a href="#yield-语句的值和-next-方法" class="headerlink" title="yield 语句的值和 next() 方法"></a>yield 语句的值和 next() 方法</h2><p>前面提到，调用迭代器的 <code>next()</code> 方法可以从函数头部或者上一个 <code>yield</code> 语句开始执行，一直执行到下一个 <code>yield</code> 语句。如果在调用 <code>next()</code> 方法时传入一个参数，则该参数会作为上一个 <code>yield</code> 语句的返回值。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">getNumbers</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> a = <span class="keyword">yield</span> <span class="number">1</span>;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'a'</span>, a);</div><div class="line">    <span class="keyword">var</span> b = <span class="keyword">yield</span> <span class="number">2</span>;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'b'</span>, b);</div><div class="line">    <span class="keyword">return</span> a + b;</div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> g = getNumbers();</div><div class="line"><span class="built_in">console</span>.log(g.next());</div><div class="line"><span class="comment">// 输出：</span></div><div class="line"><span class="comment">// &#123; value: 1, done: false &#125;</span></div><div class="line"><span class="comment">// a 200</span></div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(g.next(<span class="number">200</span>));</div><div class="line"><span class="comment">// 输出：</span></div><div class="line"><span class="comment">// &#123; value: 2, done: false &#125;</span></div><div class="line"><span class="comment">// b 300</span></div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(g.next(<span class="number">300</span>));</div><div class="line"><span class="comment">// 输出：</span></div><div class="line"><span class="comment">// &#123; value: 500, done: true &#125;</span></div></pre></td></tr></table></figure></p>
+<ul>
+<li>第一次，调用 next() 时，第一个 <code>yield</code> 语句后面的表达式值是1，所以输出 {value: 1, done: false}。</li>
+<li>第二次，调用 next(200) 时，传入 200，所以上一个 <code>yield</code> 语句的返回值被设置为 200，赋值给了 a。next(200) 的返回值是第二个 <code>yield</code> 语句后面的表达式的值，也就是2，所以输出{value: 2, done: false}。</li>
+<li>第三次，调用 next(300) 时，传入 300，所以上一个 <code>yield</code> 语句的返回值被设置为 300，赋值给了 b。此时代码走到了 return 语句，返回了 a+b 的值为500，而且迭代器编创结束，所以输出{value: 500, done: true}。</li>
+</ul>
+<h2 id="对-Generator-的使用"><a href="#对-Generator-的使用" class="headerlink" title="对 Generator 的使用"></a>对 Generator 的使用</h2><ol>
+<li>Generator 天生提供了一种保存当前代码执行状态的能力，例如：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> clock = <span class="function"><span class="keyword">function</span>*(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'Tick'</span>);</div><div class="line">    <span class="keyword">yield</span>;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'Tock'</span>);</div><div class="line">    <span class="keyword">yield</span>;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>这个 clock 函数有两种状态：Tick 和 Tock，每执行一次迭代器的 <code>next()</code> 方法，状态就改变一次。同时用一个死循环来保证迭代器的 <code>done</code> 属性值永远是 <code>false</code>。如果安装传统 JS 的写法，实现这样一个方法就需要有一个变量来保存当前的状态。相比之下，使用 Generator 无非更简洁。</p>
+<ol>
+<li>由于调用迭代器的 <code>next()</code> 方法时可以传参数改变函数内的值，所以为写出灵活的代码提供了更多的可能性。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">selfIncreaseGenerator</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> value = <span class="number">0</span>;</div><div class="line">    <span class="keyword">var</span> reset = <span class="literal">false</span>;</div><div class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</div><div class="line">        <span class="keyword">if</span> (reset) &#123;</div><div class="line">            value = <span class="number">0</span>;</div><div class="line">            reset = <span class="literal">false</span>;</div><div class="line">        &#125;</div><div class="line">        reset = <span class="keyword">yield</span> value++;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> selfIncrease = selfIncreaseGenerator();</div><div class="line"><span class="built_in">console</span>.log(selfIncrease.next().value); <span class="comment">// 输出：0</span></div><div class="line"><span class="built_in">console</span>.log(selfIncrease.next().value); <span class="comment">// 输出：1</span></div><div class="line"><span class="built_in">console</span>.log(selfIncrease.next().value); <span class="comment">// 输出：2</span></div><div class="line"><span class="built_in">console</span>.log(selfIncrease.next(<span class="literal">true</span>).value); <span class="comment">// 输出：0</span></div><div class="line"><span class="built_in">console</span>.log(selfIncrease.next().value); <span class="comment">// 输出：1</span></div><div class="line"><span class="built_in">console</span>.log(selfIncrease.next().value); <span class="comment">// 输出：2</span></div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>这里实现了一个计数器，每一次调用 <code>next()</code> 返回的值都比上一次大1。通过 <code>next(true)</code> 可以把计数器重置回0。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ECMAScript6/" rel="tag">#ECMAScript6</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/07/ECMAScript6-的-Promise-学习小结/" rel="next" title="ECMAScript6 的 Promise 学习小结">
+                <i class="fa fa-chevron-left"></i> ECMAScript6 的 Promise 学习小结
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/22/music/" rel="prev" title="关于音乐的一些想法">
+                关于音乐的一些想法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Chant" />
+          <p class="site-author-name" itemprop="name">Chant</p>
+          <p class="site-description motion-element" itemprop="description">分享前端知识、Android开发知识</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是-Generator"><span class="nav-number">1.</span> <span class="nav-text">什么是 Generator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遍历迭代器"><span class="nav-number">2.</span> <span class="nav-text">遍历迭代器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#yield-和-yield"><span class="nav-number">3.</span> <span class="nav-text">yield 和 yield*</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#yield-语句的值和-next-方法"><span class="nav-number">4.</span> <span class="nav-text">yield 语句的值和 next() 方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对-Generator-的使用"><span class="nav-number">5.</span> <span class="nav-text">对 Generator 的使用</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chant</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

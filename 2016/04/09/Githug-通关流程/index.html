@@ -1,0 +1,845 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="git," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="最近对 git 比较感兴趣，主要是因为平时工作使用 svn，慢慢感觉到 svn 的不方便。例如一定要在能连接 svn 服务器时才能提交代码。而 git 天生就没有这个问题。
+在看 git 相关资料时发现一个叫做 Githug 的小游戏（其实是一些 git 命令行的练习题），它将平时使用 git 常遇到的场景变成一关一关，从头到尾玩通关，git 常用的基本技能也就掌握得差不多了。这里记录下每一关的场">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Githug 通关流程">
+<meta property="og:url" content="http://chanthuang.github.io/2016/04/09/Githug-通关流程/index.html">
+<meta property="og:site_name" content="Chant 的博客">
+<meta property="og:description" content="最近对 git 比较感兴趣，主要是因为平时工作使用 svn，慢慢感觉到 svn 的不方便。例如一定要在能连接 svn 服务器时才能提交代码。而 git 天生就没有这个问题。
+在看 git 相关资料时发现一个叫做 Githug 的小游戏（其实是一些 git 命令行的练习题），它将平时使用 git 常遇到的场景变成一关一关，从头到尾玩通关，git 常用的基本技能也就掌握得差不多了。这里记录下每一关的场">
+<meta property="og:updated_time" content="2016-09-30T02:48:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Githug 通关流程">
+<meta name="twitter:description" content="最近对 git 比较感兴趣，主要是因为平时工作使用 svn，慢慢感觉到 svn 的不方便。例如一定要在能连接 svn 服务器时才能提交代码。而 git 天生就没有这个问题。
+在看 git 相关资料时发现一个叫做 Githug 的小游戏（其实是一些 git 命令行的练习题），它将平时使用 git 常遇到的场景变成一关一关，从头到尾玩通关，git 常用的基本技能也就掌握得差不多了。这里记录下每一关的场">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://chanthuang.github.io/2016/04/09/Githug-通关流程/"/>
+
+  <title> Githug 通关流程 | Chant 的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Chant 的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Githug 通关流程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-04-09T11:08:52+08:00" content="2016-04-09">
+              2016-04-09
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近对 git 比较感兴趣，主要是因为平时工作使用 svn，慢慢感觉到 svn 的不方便。例如一定要在能连接 svn 服务器时才能提交代码。而 git 天生就没有这个问题。</p>
+<p>在看 git 相关资料时发现一个叫做 <a href="https://github.com/Gazler/githug" target="_blank" rel="external">Githug</a> 的小游戏（其实是一些 git 命令行的练习题），它将平时使用 git 常遇到的场景变成一关一关，从头到尾玩通关，git 常用的基本技能也就掌握得差不多了。这里记录下每一关的场景和解决方法。</p>
+<a id="more"></a>
+<h2 id="Level-1-init"><a href="#Level-1-init" class="headerlink" title="Level 1, init"></a>Level 1, init</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: init</div><div class="line">Level: 1</div><div class="line">Difficulty: *</div><div class="line"></div><div class="line">A new directory, `git_hug`, has been created; initialize an empty repository in it.</div></pre></td></tr></table></figure>
+<p>要求把一个目录初始化为 git 仓库，只要在该目录中执行以下命令即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">➜ cd git_hug</div><div class="line">➜ git init</div><div class="line">Initialized empty Git repository in /Users/chant/gittest/git_hug/.git/</div></pre></td></tr></table></figure>
+<h2 id="Level-2-config"><a href="#Level-2-config" class="headerlink" title="Level 2, config"></a>Level 2, config</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: config</div><div class="line">Level: 2</div><div class="line">Difficulty: *</div><div class="line"></div><div class="line">Set up your git name and email, this is important so that your commits can be identified.</div></pre></td></tr></table></figure>
+<p>配置 Git 的用户名和邮箱，用来作为 git 操作时的用户ID。可以全局设置一个，也可以针对当前仓库设置。</p>
+<p>全局设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git config user.name chanthuang</div><div class="line">git config user.email chant.chenhuang@gmail.com</div></pre></td></tr></table></figure>
+<p>仓库级别设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git config --local user.name chanthuang</div><div class="line">git config --local user.email chant.chenhuang@gmail.com</div></pre></td></tr></table></figure>
+<h2 id="Level-3-add"><a href="#Level-3-add" class="headerlink" title="Level 3, add"></a>Level 3, add</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Name: add</div><div class="line">Level: 3</div><div class="line">Difficulty: *</div><div class="line"></div><div class="line">There is a file in your folder called `README`, you should add it to your staging area</div><div class="line">Note: You start each level with a new repo. Don&apos;t look for files from the previous one.</div></pre></td></tr></table></figure>
+<p>添加文件到 staging area。可以使用 <code>git add</code> 命令，在此前后可以使用 <code>git status -s</code> 命令查看文件的状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">➜ git status -s</div><div class="line">?? README</div><div class="line"></div><div class="line">➜ git add README</div><div class="line"></div><div class="line">➜ git status -s</div><div class="line">A  README</div></pre></td></tr></table></figure>
+<h2 id="Level-4-commit"><a href="#Level-4-commit" class="headerlink" title="Level 4, commit"></a>Level 4, commit</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: commit</div><div class="line">Level: 4</div><div class="line">Difficulty: *</div><div class="line"></div><div class="line">The `README` file has been added to your staging area, now commit it.</div></pre></td></tr></table></figure>
+<p>把 staging area 中的文件提交，使用 <code>commit</code> 命令。 <code>-m</code> 参数后跟着的是提交时的说明信息。也可以选择不加 <code>-m</code> 参数，直接执行 <code>git commit</code> 后会自动打开编辑器供输入说明信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">➜ git commit -m &apos;add README file&apos;</div><div class="line">[master (root-commit) f254dc2] add README file</div><div class="line"> 1 file changed, 0 insertions(+), 0 deletions(-)</div><div class="line"> create mode 100644 README</div></pre></td></tr></table></figure>
+<h2 id="Level-5-clone"><a href="#Level-5-clone" class="headerlink" title="Level 5, clone"></a>Level 5, clone</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: clone</div><div class="line">Level: 5</div><div class="line">Difficulty: *</div><div class="line"></div><div class="line">Clone the repository at https://github.com/Gazler/cloneme.</div></pre></td></tr></table></figure>
+<p>克隆一个仓库到本地，默认目录名为仓库名。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">➜ git clone https://github.com/Gazler/cloneme</div><div class="line">Cloning into &apos;cloneme&apos;...</div><div class="line">remote: Counting objects: 7, done.</div><div class="line">remote: Total 7 (delta 0), reused 0 (delta 0), pack-reused 7</div><div class="line">Unpacking objects: 100% (7/7), done.</div><div class="line">Checking connectivity... done.</div></pre></td></tr></table></figure>
+<h2 id="Level-6-clone-to-folder"><a href="#Level-6-clone-to-folder" class="headerlink" title="Level 6, clone to folder"></a>Level 6, clone to folder</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: clone_to_folder</div><div class="line">Level: 6</div><div class="line">Difficulty: *</div><div class="line"></div><div class="line">Clone the repository at https://github.com/Gazler/cloneme to `my_cloned_repo`.</div></pre></td></tr></table></figure>
+<p>克隆一个仓库到本地，并指定目录名。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">➜ git clone https://github.com/Gazler/cloneme my_cloned_repo</div><div class="line">Cloning into &apos;my_cloned_repo&apos;...</div><div class="line">remote: Counting objects: 7, done.</div><div class="line">remote: Total 7 (delta 0), reused 0 (delta 0), pack-reused 7</div><div class="line">Unpacking objects: 100% (7/7), done.</div><div class="line">Checking connectivity... done.</div></pre></td></tr></table></figure>
+<h2 id="Level-7-ignore"><a href="#Level-7-ignore" class="headerlink" title="Level 7, ignore"></a>Level 7, ignore</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: ignore</div><div class="line">Level: 7</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">The text editor &apos;vim&apos; creates files ending in `.swp` (swap files) for all files that are currently open.  We don&apos;t want them creeping into the repository.  Make this repository ignore `.swp` files.</div></pre></td></tr></table></figure>
+<p>所有 .swp 后缀的文件，不希望加入 git 版本管理。git 目录下有一个 <code>.gitignore</code> 文件，文件中列出了要 git 忽略的文件，支持用 * 号表示通配符。</p>
+<p>所以只要在 .gitignore 文件中添加一行 *.swp，即可忽略所有 .swp 文件.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">➜ echo &quot;*.swp&quot; &gt;&gt; .gitignore</div></pre></td></tr></table></figure>
+<h2 id="Level-8-include"><a href="#Level-8-include" class="headerlink" title="Level 8, include"></a>Level 8, include</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: include</div><div class="line">Level: 8</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">Notice a few files with the &apos;.a&apos; extension.  We want git to ignore all but the &apos;lib.a&apos; file.</div></pre></td></tr></table></figure>
+<p>忽略所有 .a 后缀的文件，除了 lib.a。<br>在 <code>.gitignore</code> 文件中使用 ! 表示不要忽略</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">➜ echo &quot;*.a&quot; &gt;&gt; .gitignore</div><div class="line">➜ echo &quot;\!lib.a&quot; &gt;&gt; .gitignore</div></pre></td></tr></table></figure>
+<h2 id="Level-9-status"><a href="#Level-9-status" class="headerlink" title="Level 9, status"></a>Level 9, status</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: status</div><div class="line">Level: 9</div><div class="line">Difficulty: *</div><div class="line"></div><div class="line">There are some files in this repository, one of the files is untracked, which file is it?</div></pre></td></tr></table></figure>
+<p>用 <code>git status</code> 命令查看当前目录中文件的 git 状态。Untracked files 下的红色的文件就是题目中要找的文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">➜ git status</div><div class="line">On branch master</div><div class="line"></div><div class="line">Initial commit</div><div class="line"></div><div class="line">Changes to be committed:</div><div class="line">  (use &quot;git rm --cached &lt;file&gt;...&quot; to unstage)</div><div class="line"></div><div class="line">	new file:   Guardfile</div><div class="line">	new file:   README</div><div class="line">	new file:   config.rb</div><div class="line">	new file:   deploy.rb</div><div class="line">	new file:   setup.rb</div><div class="line"></div><div class="line">Untracked files:</div><div class="line">  (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)</div><div class="line"></div><div class="line">	database.yml</div></pre></td></tr></table></figure>
+<h2 id="Level-10-number-of-files-committed"><a href="#Level-10-number-of-files-committed" class="headerlink" title="Level 10, number of files committed"></a>Level 10, number of files committed</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: number_of_files_committed</div><div class="line">Level: 10</div><div class="line">Difficulty: *</div><div class="line"></div><div class="line">There are some files in this repository, how many of the files will be committed?</div></pre></td></tr></table></figure>
+<p>要求找出有多少个文件处于待 commit 状态。用 <code>git status</code> 命令查看当前目录中文件的 git 状态。Changes to be commited 下的文件即是处于 staging area，待 commit 的文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">➜ git status</div><div class="line">On branch master</div><div class="line">Changes to be committed:</div><div class="line">  (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)</div><div class="line"></div><div class="line">	new file:   rubyfile1.rb</div><div class="line">	modified:   rubyfile4.rb</div><div class="line"></div><div class="line">Changes not staged for commit:</div><div class="line">  (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)</div><div class="line">  (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)</div><div class="line"></div><div class="line">	modified:   rubyfile5.rb</div><div class="line"></div><div class="line">Untracked files:</div><div class="line">  (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)</div><div class="line"></div><div class="line">	rubyfile6.rb</div><div class="line">	rubyfile7.rb</div></pre></td></tr></table></figure>
+<h2 id="Level-11-rm"><a href="#Level-11-rm" class="headerlink" title="Level 11, rm"></a>Level 11, rm</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: rm</div><div class="line">Level: 11</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">A file has been removed from the working tree, however the file was not removed from the repository.  Find out what this file was and remove it.</div></pre></td></tr></table></figure>
+<p>有个文件从本地删除了，但未从 git 仓库中删除，要求找到这个文件，并提交删除。</p>
+<p>同样的，先使用 <code>git status</code> 命令查看文件状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">➜ git status</div><div class="line">On branch master</div><div class="line">Changes not staged for commit:</div><div class="line">  (use &quot;git add/rm &lt;file&gt;...&quot; to update what will be committed)</div><div class="line">  (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)</div><div class="line"></div><div class="line">	deleted:    deleteme.rb</div><div class="line"></div><div class="line">no changes added to commit (use &quot;git add&quot; and/or &quot;git commit -a&quot;)</div></pre></td></tr></table></figure>
+<p>然后提交删除，提交之前先将修改的内容 add 到 staging area。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">➜ git add deleteme.rb</div><div class="line">➜ git status</div><div class="line">On branch master</div><div class="line">Changes to be committed:</div><div class="line">  (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)</div><div class="line"></div><div class="line">	deleted:    deleteme.rb</div><div class="line">	</div><div class="line">➜ git commit -m &apos;delete file: deletemr.rb&apos;</div><div class="line">[master ceb5e66] delete file: deletemr.rb</div><div class="line"> 1 file changed, 0 insertions(+), 0 deletions(-)</div><div class="line"> delete mode 100644 deleteme.rb</div></pre></td></tr></table></figure>
+<h2 id="Level-12-rm-cached"><a href="#Level-12-rm-cached" class="headerlink" title="Level 12, rm cached"></a>Level 12, rm cached</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: rm_cached</div><div class="line">Level: 12</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">A file has accidentally been added to your staging area, find out which file and remove it from the staging area.  *NOTE* Do not remove the file from the file system, only from git.</div></pre></td></tr></table></figure>
+<p>有个文件已经加到 staging area 中，要把它从 staging area 移除，注意不要从文件系统中删除。<code>git rm</code> 命令可以将文件从 git 仓库中删除，而加上 <code>--cached</code> 参数可以只从 staging area 中删除。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">➜ git status</div><div class="line">On branch master</div><div class="line"></div><div class="line">Initial commit</div><div class="line"></div><div class="line">Changes to be committed:</div><div class="line">  (use &quot;git rm --cached &lt;file&gt;...&quot; to unstage)</div><div class="line"></div><div class="line">	new file:   deleteme.rb</div><div class="line">	</div><div class="line">➜ git rm --cached deleteme.rb</div><div class="line">rm &apos;deleteme.rb&apos;</div><div class="line"></div><div class="line">➜ git status</div><div class="line">On branch master</div><div class="line"></div><div class="line">Initial commit</div><div class="line"></div><div class="line">Untracked files:</div><div class="line">  (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)</div><div class="line"></div><div class="line">	deleteme.rb</div><div class="line"></div><div class="line">nothing added to commit but untracked files present (use &quot;git add&quot; to track)</div></pre></td></tr></table></figure>
+<p>扩展：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">--cached 参数 // 只从 staging area 中删除。</div><div class="line">-f 参数 // 强制从 staging area 和文件系统中一起删除。</div></pre></td></tr></table></figure>
+<h2 id="Level-13-stash"><a href="#Level-13-stash" class="headerlink" title="Level 13, stash"></a>Level 13, stash</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: stash</div><div class="line">Level: 13</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">You&apos;ve made some changes and want to work on them later. You should save them, but don&apos;t commit them.</div></pre></td></tr></table></figure>
+<p>将本地所做的修改，临时保存下来，但不是提交。这里可以利用 git 提供的 stash 功能，stash 是一个栈，可以多次保存。要恢复时可以多次 pop 将现场恢复回来。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">➜ git stash</div><div class="line">Saved working directory and index state WIP on master: 0206059 Add some lyrics</div><div class="line">HEAD is now at 0206059 Add some lyrics</div></pre></td></tr></table></figure>
+<p>扩展：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git stash list // 查看 stash 栈的所有内容</div><div class="line">git stash pop // 将最近一次入栈的内容出栈</div></pre></td></tr></table></figure>
+<h2 id="Level-14-rename"><a href="#Level-14-rename" class="headerlink" title="Level 14, rename"></a>Level 14, rename</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: rename</div><div class="line">Level: 14</div><div class="line">Difficulty: ***</div><div class="line"></div><div class="line">We have a file called `oldfile.txt`. We want to rename it to `newfile.txt` and stage this change.</div></pre></td></tr></table></figure>
+<p>使用 <code>git mv</code> 重命名文件，执行完之后修改自动处于 staging area 中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">➜ git mv oldfile.txt newfile.txt</div><div class="line">➜ git status -s</div><div class="line">R  oldfile.txt -&gt; newfile.txt</div></pre></td></tr></table></figure>
+<h2 id="Level-15-restructure"><a href="#Level-15-restructure" class="headerlink" title="Level 15, restructure"></a>Level 15, restructure</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: restructure</div><div class="line">Level: 15</div><div class="line">Difficulty: ***</div><div class="line"></div><div class="line">You added some files to your repository, but now realize that your project needs to be restructured.  Make a new folder named `src` and using Git move all of the .html files into this folder.</div></pre></td></tr></table></figure>
+<p>移动已加入 git 管理的文件。把所有 <code>.html</code> 文件移动到一个新目录 <code>src</code> 中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">➜ ls</div><div class="line">about.html   contact.html index.html</div><div class="line"></div><div class="line">➜ mkdir src</div><div class="line"></div><div class="line">➜ git mv *.html src/</div><div class="line"></div><div class="line">➜ git status -s</div><div class="line">R  about.html -&gt; src/about.html</div><div class="line">R  contact.html -&gt; src/contact.html</div><div class="line">R  index.html -&gt; src/index.html</div></pre></td></tr></table></figure>
+<h2 id="Level-16-log"><a href="#Level-16-log" class="headerlink" title="Level 16, log"></a>Level 16, log</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: log</div><div class="line">Level: 16</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">You will be asked for the hash of most recent commit.  You will need to investigate the logs of the repository for this.</div></pre></td></tr></table></figure>
+<p>找出最近一次提交的 hash 值。可以使用 <code>git log</code> 命令查看 log。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">➜ git log</div></pre></td></tr></table></figure>
+<p>以下是输出内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">commit 497191d5cae663b4f4dcd19ea8ff803c5fc49098</div><div class="line">Author: chanthuang &lt;chant.chenhuang@gmail.com&gt;</div><div class="line">Date:   Sun Apr 10 15:54:12 2016 +0800</div><div class="line"></div><div class="line">    THIS IS THE COMMIT YOU ARE LOOKING FOR!</div></pre></td></tr></table></figure>
+<p>扩展：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-&lt;n&gt; // 该参数可以指定输出 log 的条目数。例如 git log -1 是只输出最近的一条 log</div></pre></td></tr></table></figure>
+<h2 id="Level-17-tag"><a href="#Level-17-tag" class="headerlink" title="Level 17, tag"></a>Level 17, tag</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: tag</div><div class="line">Level: 17</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">We have a git repo and we want to tag the current commit with `new_tag`.</div></pre></td></tr></table></figure>
+<p>为最后一次 commit 打上 tag，命名为 <code>new_tag</code>。可以使用 <code>git tag &lt;tag_name&gt;</code> 来打 tag。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">➜ git tag new_tag</div><div class="line"></div><div class="line">➜ git tag --list</div><div class="line">new_tag</div></pre></td></tr></table></figure>
+<p>扩展：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git tag --list // 查看所有 tag</div><div class="line">git tag -d &lt;tag_name&gt; // 删除已有的 tag</div><div class="line">git tag &lt;tag_name&gt; &lt;commit_hash&gt; // 针对某个特定的 commit 打 tag</div></pre></td></tr></table></figure>
+<h2 id="Level-18-push-tags"><a href="#Level-18-push-tags" class="headerlink" title="Level 18, push tags"></a>Level 18, push tags</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: push_tags</div><div class="line">Level: 18</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">There are tags in the repository that aren&apos;t pushed into remote repository. Push them now.</div></pre></td></tr></table></figure>
+<p>把本地所有 tags 都推送到远端仓库。可以使用 <code>git push</code> 命令来 push，<code>--tags</code> 命令指定要推送的是 tags。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">➜ git push --tags</div><div class="line">Total 0 (delta 0), reused 0 (delta 0)</div><div class="line">To /var/folders/1n/jdb4hzp53dl8vcv3kkm7hp7m0000gn/T/d20160410-63290-19t6zo1/.git</div><div class="line"> * [new tag]         tag_to_be_pushed -&gt; tag_to_be_pushed</div></pre></td></tr></table></figure>
+<h2 id="Level-19-commit-amend"><a href="#Level-19-commit-amend" class="headerlink" title="Level 19, commit amend"></a>Level 19, commit amend</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: commit_amend</div><div class="line">Level: 19</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">The `README` file has been committed, but it looks like the file `forgotten_file.rb` was missing from the commit.  Add the file and amend your previous commit to include it.</div></pre></td></tr></table></figure>
+<p>某次 commit 时漏掉了 <code>forgotten_file.rb</code> 文件，现在要求把这个文件加入到那次 commit 中去。可以使用 <code>git commit</code> 的 <code>--amend</code> 参数来修改 commit 信息。提交时会进入编辑器供输入提交信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">➜ git st</div><div class="line">?? forgotten_file.rb</div><div class="line"></div><div class="line">➜ git add forgotten_file.rb</div><div class="line"></div><div class="line">➜ git st</div><div class="line">A  forgotten_file.rb</div><div class="line"></div><div class="line">➜ git commit --amend</div><div class="line">[master 82010bb] Initial commit</div><div class="line"> Date: Sun Apr 10 16:17:32 2016 +0800</div><div class="line"> 2 files changed, 0 insertions(+), 0 deletions(-)</div><div class="line"> create mode 100644 README</div><div class="line"> create mode 100644 forgotten_file.rb</div></pre></td></tr></table></figure>
+<h2 id="Level-20-commit-in-future"><a href="#Level-20-commit-in-future" class="headerlink" title="Level 20, commit in future"></a>Level 20, commit in future</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: commit_in_future</div><div class="line">Level: 20</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">Commit your changes with the future date (e.g. tomorrow).</div></pre></td></tr></table></figure>
+<p>还是提交，但是要求提交时间在明天。可以使用 <code>git commit</code> 的 <code>--date=&lt;date&gt;</code> 参数来指定 commit 的时间。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">➜ git commit --date=11.04.2016T08:00:00 -m &apos;commit tomorrow&apos;</div><div class="line">[master (root-commit) 3b103a0] commit tomorrow</div><div class="line"> Date: Mon Apr 11 08:00:00 2016 +0800</div><div class="line"> 1 file changed, 0 insertions(+), 0 deletions(-)</div><div class="line"> create mode 100644 README</div></pre></td></tr></table></figure>
+<h2 id="Level-21-reset"><a href="#Level-21-reset" class="headerlink" title="Level 21, reset"></a>Level 21, reset</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: reset</div><div class="line">Level: 21</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">There are two files to be committed.  The goal was to add each file as a separate commit, however both were added by accident.  Unstage the file `to_commit_second.rb` using the reset command (don&apos;t commit anything).</div></pre></td></tr></table></figure>
+<p>有 2 个文件都被添加到了 staging area，现在把其中一个从 starging area 撤销下来，下次再提交。可以使用 <code>git reset HEAD &lt;file&gt;</code> 来执行撤销操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">➜ git st</div><div class="line">A  to_commit_first.rb</div><div class="line">A  to_commit_second.rb</div><div class="line"></div><div class="line">➜ git reset HEAD to_commit_second.rb</div><div class="line"></div><div class="line">➜ git st</div><div class="line">A  to_commit_first.rb</div><div class="line">?? to_commit_second.rb</div></pre></td></tr></table></figure>
+<h2 id="Level-22-reset-soft"><a href="#Level-22-reset-soft" class="headerlink" title="Level 22, reset soft"></a>Level 22, reset soft</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: reset_soft</div><div class="line">Level: 22</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">You committed too soon. Now you want to undo the last commit, while keeping the index.</div></pre></td></tr></table></figure>
+<p>撤销最后一次 commit，但依然保持本地的索引。可以使用 <code>git reset</code> 命令的 <code>--soft</code> 参数，这样 reset 之后上一次 commit 就被撤销了，而该 commit 所做的修改还会保留在 staging area 中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">➜ git status -s</div><div class="line"></div><div class="line">➜ git reset --soft HEAD^1</div><div class="line"></div><div class="line">➜ git status -s</div><div class="line">A  newfile.rb</div></pre></td></tr></table></figure>
+<p>扩展：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git reset --soft // 回退后将上一次 commit 的内容保留在 staging area 中</div><div class="line">git reset --hard // 回退后不保留上一次 commit 的内容</div><div class="line">git reset --mixed // 回退后将上一次 commit 的内容保留在 working tree 中</div></pre></td></tr></table></figure>
+<h2 id="Level-23-checkout-file"><a href="#Level-23-checkout-file" class="headerlink" title="Level 23, checkout file"></a>Level 23, checkout file</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: checkout_file</div><div class="line">Level: 23</div><div class="line">Difficulty: ***</div><div class="line"></div><div class="line">A file has been modified, but you don&apos;t want to keep the modification.  Checkout the `config.rb` file from the last commit.</div></pre></td></tr></table></figure>
+<p>放弃本地对于某个文件的修改，可以使用 <code>git checkout</code> 命令。该命令会使本地所做的修改被回退。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">➜ git status -s</div><div class="line"> M config.rb</div><div class="line"></div><div class="line">➜ git checkout config.rb</div><div class="line"></div><div class="line">➜ git status -s</div><div class="line">➜</div></pre></td></tr></table></figure>
+<h2 id="Level-24-remote"><a href="#Level-24-remote" class="headerlink" title="Level 24, remote"></a>Level 24, remote</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: remote</div><div class="line">Level: 24</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">This project has a remote repository.  Identify it.</div></pre></td></tr></table></figure>
+<p>git 提供了 <code>git remote</code> 命令和相关参数来查看和操作远端仓库。现在查看该项目的远端仓库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">➜ git remote</div><div class="line">my_remote_repo</div></pre></td></tr></table></figure>
+<h2 id="Level-25-remote-url"><a href="#Level-25-remote-url" class="headerlink" title="Level 25, remote url"></a>Level 25, remote url</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: remote_url</div><div class="line">Level: 25</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">The remote repositories have a url associated to them.  Please enter the url of remote_location.</div></pre></td></tr></table></figure>
+<p>查看远端仓库的 URL。可以使用 <code>git remote</code> 的 <code>-v</code> 参数（<code>--verbose</code> 的简写） 命令来查看所有远端仓库的名字和对应的 URL。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">➜ git remote -v</div><div class="line">my_remote_repo	https://github.com/Gazler/githug (fetch)</div><div class="line">my_remote_repo	https://github.com/Gazler/githug (push)</div><div class="line">remote_location	https://github.com/githug/not_a_repo (fetch)</div><div class="line">remote_location	https://github.com/githug/not_a_repo (push)</div></pre></td></tr></table></figure>
+<h2 id="Level-26-pull"><a href="#Level-26-pull" class="headerlink" title="Level 26, pull"></a>Level 26, pull</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: pull</div><div class="line">Level: 26</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">You need to pull changes from your origin repository.</div></pre></td></tr></table></figure>
+<p>要把远端仓库有而本地没有的修改拉取到本地，可以使用 <code>git pull &lt;remote-name&gt; &lt;master-name&gt;</code> 命令。在此之前可以先用 <code>git remote -v</code> 查看有哪些远端仓库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">➜ git remote -v</div><div class="line">origin	https://github.com/pull-this/thing-to-pull (fetch)</div><div class="line">origin	https://github.com/pull-this/thing-to-pull (push)</div><div class="line"></div><div class="line">➜ git pull origin master</div><div class="line">remote: Counting objects: 3, done.</div><div class="line">remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 3</div><div class="line">Unpacking objects: 100% (3/3), done.</div><div class="line">From https://github.com/pull-this/thing-to-pull</div><div class="line"> * branch            master     -&gt; FETCH_HEAD</div><div class="line"> * [new branch]      master     -&gt; origin/master</div></pre></td></tr></table></figure>
+<h2 id="Level-27-remote-add"><a href="#Level-27-remote-add" class="headerlink" title="Level 27, remote add"></a>Level 27, remote add</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: remote_add</div><div class="line">Level: 27</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">Add a remote repository called `origin` with the url https://github.com/githug/githug</div></pre></td></tr></table></figure>
+<p>添加一个远端仓库，指定名字和 url。可以使用 <code>git remote add &lt;remote-name&gt; &lt;url&gt;</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">➜ git remote</div><div class="line"></div><div class="line">➜ git remote add origin https://github.com/githug/githug</div><div class="line"></div><div class="line">➜ git remote</div><div class="line">origin</div></pre></td></tr></table></figure>
+<h2 id="Level-28-push"><a href="#Level-28-push" class="headerlink" title="Level 28, push"></a>Level 28, push</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: push</div><div class="line">Level: 28</div><div class="line">Difficulty: ***</div><div class="line"></div><div class="line">Your local master branch has diverged from the remote origin/master branch. Rebase your commit onto origin/master and push it to remote.</div></pre></td></tr></table></figure>
+<p>本地和远端仓库已经分别做了一些修改，现在要将本地与远端先对齐，然后再把本地的修改 push 到远端。可以使用 <code>git rebase</code> 命令将远端的修改拉取到本地，然后再 <code>git push</code> 将本地的修改推送到远端。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">➜ git rebase</div><div class="line">First, rewinding head to replay your work on top of it...</div><div class="line">Applying: First commit</div><div class="line">Applying: Second commit</div><div class="line">Applying: Third commit</div><div class="line"></div><div class="line">➜ git push origin master</div><div class="line">Counting objects: 6, done.</div><div class="line">Delta compression using up to 4 threads.</div><div class="line">Compressing objects: 100% (6/6), done.</div><div class="line">Writing objects: 100% (6/6), 598 bytes | 0 bytes/s, done.</div><div class="line">Total 6 (delta 2), reused 0 (delta 0)</div><div class="line">To /var/folders/1n/jdb4hzp53dl8vcv3kkm7hp7m0000gn/T/d20160410-64180-19cgbfk/.git</div><div class="line">   c12cc72..e7d902b  master -&gt; master</div></pre></td></tr></table></figure>
+<h2 id="Level-29-diff"><a href="#Level-29-diff" class="headerlink" title="Level 29, diff"></a>Level 29, diff</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: diff</div><div class="line">Level: 29</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">There have been modifications to the `app.rb` file since your last commit.  Find out which line has changed.</div></pre></td></tr></table></figure>
+<p>查看本地文件和 staging area 的差异，可以用 <code>git diff</code> 命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">➜ git diff</div></pre></td></tr></table></figure>
+<p>以下是输出的内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">diff --git a/app.rb b/app.rb</div><div class="line">index 4f703ca..3bfa839 100644</div><div class="line">--- a/app.rb</div><div class="line">+++ b/app.rb</div><div class="line">@@ -23,7 +23,7 @@ get &apos;/yet_another&apos; do</div><div class="line">   erb :success</div><div class="line"> end</div><div class="line"> get &apos;/another_page&apos; do</div><div class="line">-  @message = get_response(&apos;data.json&apos;)</div><div class="line">+  @message = get_response(&apos;server.json&apos;)</div><div class="line">   erb :another</div><div class="line"> end</div></pre></td></tr></table></figure>
+<p>扩展：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git diff // 查看 working directory 与 staging area 之间的差异</div><div class="line">git diff --cached // 查看 repository 与 staging area 之间的差异</div><div class="line">git diff HEAD // 查看 working directory 与 repository 之间的差异</div></pre></td></tr></table></figure>
+<h2 id="Level-30-blame"><a href="#Level-30-blame" class="headerlink" title="Level 30, blame"></a>Level 30, blame</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: blame</div><div class="line">Level: 30</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">Someone has put a password inside the file `config.rb` find out who it was.</div></pre></td></tr></table></figure>
+<p>找出 repository 中某个文件的某一行是谁写的。可以使用 <code>git blame</code> 命令来查看某个文件的每一行分别对应的 commit，从而可以知道每一行最后的修改人是谁。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">➜ git blame config.rb</div></pre></td></tr></table></figure>
+<p>以下是输出内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">^5e8863d (Gary Rennie       2012-03-08 23:05:24 +0000  1) class Config</div><div class="line">70d00535 (Bruce Banner      2012-03-08 23:07:41 +0000  2)   attr_accessor :name, :password</div><div class="line">97bdd0cc (Spider Man        2012-03-08 23:08:15 +0000  3)   def initialize(name, password = nil, options = &#123;&#125;)</div><div class="line">^5e8863d (Gary Rennie       2012-03-08 23:05:24 +0000  4)     @name = name</div><div class="line">97bdd0cc (Spider Man        2012-03-08 23:08:15 +0000  5)     @password = password || &quot;i&lt;3evil&quot;</div><div class="line">00000000 (Not Committed Yet 2016-04-10 16:38:43 +0800  6)</div><div class="line">09409480 (Spider Man        2012-03-08 23:06:18 +0000  7)     if options[:downcase]</div><div class="line">09409480 (Spider Man        2012-03-08 23:06:18 +0000  8)       @name.downcase!</div><div class="line">09409480 (Spider Man        2012-03-08 23:06:18 +0000  9)     end</div><div class="line">70d00535 (Bruce Banner      2012-03-08 23:07:41 +0000 10)</div><div class="line">ffd39c2d (Gary Rennie       2012-03-08 23:08:58 +0000 11)     if options[:upcase]</div><div class="line">ffd39c2d (Gary Rennie       2012-03-08 23:08:58 +0000 12)       @name.upcase!</div><div class="line">ffd39c2d (Gary Rennie       2012-03-08 23:08:58 +0000 13)     end</div><div class="line">ffd39c2d (Gary Rennie       2012-03-08 23:08:58 +0000 14)</div><div class="line">^5e8863d (Gary Rennie       2012-03-08 23:05:24 +0000 15)   end</div><div class="line">^5e8863d (Gary Rennie       2012-03-08 23:05:24 +0000 16) end</div></pre></td></tr></table></figure>
+<h2 id="Level-31-branch"><a href="#Level-31-branch" class="headerlink" title="Level 31, branch"></a>Level 31, branch</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: branch</div><div class="line">Level: 31</div><div class="line">Difficulty: *</div><div class="line"></div><div class="line">You want to work on a piece of code that has the potential to break things, create the branch test_code.</div></pre></td></tr></table></figure>
+<p>创建一个分支，可以使用 <code>git branch &lt;branch_name&gt;</code> 命令来创建。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">➜ git branch test_code</div><div class="line"></div><div class="line">➜ git branch</div><div class="line">* master</div><div class="line">  test_code</div></pre></td></tr></table></figure>
+<p>扩展：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">git branch // 列出所有分支</div><div class="line">git checkout &lt;branch_name&gt; // 切换到某个已存在的分支</div><div class="line">git checkout -b &lt;branch_name&gt; // 创建分支并切换到该分支</div><div class="line">git branch -d &lt;branch_name&gt; // 删除某个分支</div></pre></td></tr></table></figure>
+<h2 id="Level-32-checkout"><a href="#Level-32-checkout" class="headerlink" title="Level 32, checkout"></a>Level 32, checkout</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: checkout</div><div class="line">Level: 32</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">Create and switch to a new branch called my_branch.  You will need to create a branch like you did in the previous level.</div></pre></td></tr></table></figure>
+<p>创建并切换到分支 my_branch，可以使用上面提到的命令 <code>git checkout -b</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">➜ git checkout -b my_branch</div><div class="line">Switched to a new branch &apos;my_branch&apos;</div></pre></td></tr></table></figure>
+<h2 id="Level-33-checkout-tag"><a href="#Level-33-checkout-tag" class="headerlink" title="Level 33, checkout tag"></a>Level 33, checkout tag</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: checkout_tag</div><div class="line">Level: 33</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">You need to fix a bug in the version 1.2 of your app. Checkout the tag `v1.2`.</div></pre></td></tr></table></figure>
+<p>切换到名字为 <code>v1.2</code> 的 tag。<code>git checkout</code> 命令除了可以切换 branch 之外，还可以切换到某个 tag。在此之前可以使用 <code>git tag</code> 命令查看所有 tag。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">➜ git tag</div><div class="line">v1.0</div><div class="line">v1.2</div><div class="line">v1.5</div><div class="line"></div><div class="line">➜ git checkout v1.2</div><div class="line">Note: checking out &apos;v1.2&apos;.</div><div class="line"></div><div class="line">You are in &apos;detached HEAD&apos; state. You can look around, make experimental</div><div class="line">changes and commit them, and you can discard any commits you make in this</div><div class="line">state without impacting any branches by performing another checkout.</div><div class="line"></div><div class="line">If you want to create a new branch to retain commits you create, you may</div><div class="line">do so (now or later) by using -b with the checkout command again. Example:</div><div class="line"></div><div class="line">  git checkout -b &lt;new-branch-name&gt;</div><div class="line"></div><div class="line">HEAD is now at 41bc247... Some more changes</div></pre></td></tr></table></figure>
+<p>扩展：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git tag // 列出所有 tag</div><div class="line">git chekcout &lt;tag_name&gt; // 切换到某个tag</div></pre></td></tr></table></figure>
+<h2 id="Level-34-checkout-tag-over-branch"><a href="#Level-34-checkout-tag-over-branch" class="headerlink" title="Level 34, checkout tag over branch"></a>Level 34, checkout tag over branch</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: checkout_tag_over_branch</div><div class="line">Level: 34</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">You need to fix a bug in the version 1.2 of your app. Checkout the tag `v1.2` (Note: There is also a branch named `v1.2`).</div></pre></td></tr></table></figure>
+<p>与上一题一样，要求是 checkout 到名字为 <code>v1.2</code> 的 tag，但与此同时存在一个同名的 branch。此时可以用 ·git checkout tags/<tag_name>· 来明确指定要切换到的是 tag。</tag_name></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">➜ git checkout tags/v1.2</div><div class="line">Note: checking out &apos;tags/v1.2&apos;.</div><div class="line"></div><div class="line">You are in &apos;detached HEAD&apos; state. You can look around, make experimental</div><div class="line">changes and commit them, and you can discard any commits you make in this</div><div class="line">state without impacting any branches by performing another checkout.</div><div class="line"></div><div class="line">If you want to create a new branch to retain commits you create, you may</div><div class="line">do so (now or later) by using -b with the checkout command again. Example:</div><div class="line"></div><div class="line">  git checkout -b &lt;new-branch-name&gt;</div><div class="line"></div><div class="line">HEAD is now at b3342b2... Some more changes</div></pre></td></tr></table></figure>
+<h2 id="Level-35-branch-at"><a href="#Level-35-branch-at" class="headerlink" title="Level 35, branch at"></a>Level 35, branch at</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: branch_at</div><div class="line">Level: 35</div><div class="line">Difficulty: ***</div><div class="line"></div><div class="line">You forgot to branch at the previous commit and made a commit on top of it. Create branch test_branch at the commit before the last.</div></pre></td></tr></table></figure>
+<p>针对某个特定的 commit 创建一条分支。我们知道 <code>git branch &lt;branch_name&gt;</code> 可以基于当前版本创建一条分支，而在后面跟上某个 commit 的 hash_code 即可针对某个特定的 commit 创建分支。</p>
+<p>先查看 log 信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">➜ git log</div></pre></td></tr></table></figure>
+<p>以下是输出内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">commit ac1a8d622ac967ea27c6198d82db3d17c5d63165</div><div class="line">Author: chanthuang &lt;chant.chenhuang@gmail.com&gt;</div><div class="line">Date:   Sun Apr 10 16:45:37 2016 +0800</div><div class="line"></div><div class="line">    Updating file1 again</div><div class="line"></div><div class="line">commit 0931890a2e08647e889f7533e853146941d4cd4d</div><div class="line">Author: chanthuang &lt;chant.chenhuang@gmail.com&gt;</div><div class="line">Date:   Sun Apr 10 16:45:37 2016 +0800</div><div class="line"></div><div class="line">    Updating file1</div><div class="line"></div><div class="line">commit 2ba8a95e0c118ba9229a79ed52a594a687adfc14</div><div class="line">Author: chanthuang &lt;chant.chenhuang@gmail.com&gt;</div><div class="line">Date:   Sun Apr 10 16:45:37 2016 +0800</div><div class="line"></div><div class="line">    Adding file1</div></pre></td></tr></table></figure>
+<p>找到需要的 hash code，创建分支</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">➜ git branch test_branch 0931890a2e08647e889f7533e853146941d4cd4d</div><div class="line"></div><div class="line">➜ git branch</div><div class="line">* master</div><div class="line">  test_branch</div></pre></td></tr></table></figure>
+<h2 id="Level-36-delete-branch"><a href="#Level-36-delete-branch" class="headerlink" title="Level 36, delete branch"></a>Level 36, delete branch</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: delete_branch</div><div class="line">Level: 36</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">You have created too many branches for your project. There is an old branch in your repo called &apos;delete_me&apos;, you should delete it.</div></pre></td></tr></table></figure>
+<p>删除某条分支，可以使用 <code>git branch -d &lt;branch_name&gt;</code> 命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">➜ git branch</div><div class="line">  delete_me</div><div class="line">* master</div><div class="line"></div><div class="line">➜ git branch -d delete_me</div><div class="line">Deleted branch delete_me (was b60afe2).</div></pre></td></tr></table></figure>
+<h2 id="Level-37-push-branch"><a href="#Level-37-push-branch" class="headerlink" title="Level 37, push branch"></a>Level 37, push branch</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: push_branch</div><div class="line">Level: 37</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">You&apos;ve made some changes to a local branch and want to share it, but aren&apos;t yet ready to merge it with the &apos;master&apos; branch.  Push only &apos;test_branch&apos; to the remote repository</div></pre></td></tr></table></figure>
+<p>push 某个指定的分支到远程仓库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">// 先查看有哪些分支</div><div class="line">➜ git branch</div><div class="line">* master</div><div class="line">  other_branch</div><div class="line">  test_branch</div><div class="line">// push test_branch 分支</div><div class="line"></div><div class="line">➜ git push origin test_branch</div><div class="line">Counting objects: 6, done.</div><div class="line">Delta compression using up to 4 threads.</div><div class="line">Compressing objects: 100% (6/6), done.</div><div class="line">Writing objects: 100% (6/6), 575 bytes | 0 bytes/s, done.</div><div class="line">Total 6 (delta 3), reused 0 (delta 0)</div><div class="line">To /var/folders/1n/jdb4hzp53dl8vcv3kkm7hp7m0000gn/T/d20160406-41109-1bue94u/.git</div><div class="line"> * [new branch]      test_branch -&gt; test_branch</div></pre></td></tr></table></figure>
+<h2 id="Level-38-merge"><a href="#Level-38-merge" class="headerlink" title="Level 38, merge"></a>Level 38, merge</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: merge</div><div class="line">Level: 38</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">We have a file in the branch &apos;feature&apos;; Let&apos;s merge it to the master branch.</div></pre></td></tr></table></figure>
+<p>将 feature 分支的代码合并到 master 来。可以使用 <code>git merge</code>。</p>
+<p>先查看有哪些分支</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">➜ git branch</div><div class="line">  feature</div><div class="line">* master</div></pre></td></tr></table></figure>
+<p>把 feature 分支的代码合并到 master</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">➜ git merge feature</div><div class="line">Updating e12277f..cc8ea5a</div><div class="line">Fast-forward</div><div class="line"> file2 | 0</div><div class="line"> 1 file changed, 0 insertions(+), 0 deletions(-)</div><div class="line"> create mode 100644 file2</div></pre></td></tr></table></figure>
+<h2 id="Level-39-fetch"><a href="#Level-39-fetch" class="headerlink" title="Level 39, fetch"></a>Level 39, fetch</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: fetch</div><div class="line">Level: 39</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">Looks like a new branch was pushed into our remote repository. Get the changes without merging them with the local repository</div></pre></td></tr></table></figure>
+<p>获得远程仓库的修改，但不要合并到本地分支来。可以使用 <code>git fetch</code> 来拉取远程仓库的代码，但不合并。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">➜ git fetch</div><div class="line">remote: Counting objects: 2, done.</div><div class="line">remote: Compressing objects: 100% (2/2), done.</div><div class="line">remote: Total 2 (delta 0), reused 0 (delta 0)</div><div class="line">Unpacking objects: 100% (2/2), done.</div><div class="line">From /var/folders/1n/jdb4hzp53dl8vcv3kkm7hp7m0000gn/T/d20160406-41343-1b65e3j/</div><div class="line"> * [new branch]      new_branch -&gt; origin/new_branch</div></pre></td></tr></table></figure>
+<p>扩展：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git pull // 相当于先执行 git fetch 然后再执行 git merge。</div></pre></td></tr></table></figure>
+<h2 id="Level-40-rebase"><a href="#Level-40-rebase" class="headerlink" title="Level 40, rebase"></a>Level 40, rebase</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: rebase</div><div class="line">Level: 40</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">We are using a git rebase workflow and the feature branch is ready to go into master. Let&apos;s rebase the feature branch onto our master branch.</div></pre></td></tr></table></figure>
+<p>有2条分支，feature 和 master，各自前进了一段时间。现在准备把 feature 合并到 master 来，但假如我们使用 <code>git merge</code> 的话，在 master 分支会看到一条 merge 的log。</p>
+<p>现在我们不希望产生这条 merge 的 log，而希望合并后的 log 看上去就像 feature 分支从来都不存在、feature 的提交都是在 master 上进行的，可以使用 <code>git rebase</code> 命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">➜ git rebase master feature</div><div class="line">First, rewinding head to replay your work on top of it...</div><div class="line">Applying: add feature</div></pre></td></tr></table></figure>
+<h2 id="Level-41-repack"><a href="#Level-41-repack" class="headerlink" title="Level 41, repack"></a>Level 41, repack</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: repack</div><div class="line">Level: 41</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">Optimise how your repository is packaged ensuring that redundant packs are removed.</div></pre></td></tr></table></figure>
+<p>将未打包的松散对象打包。（作用不是很懂）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">➜ git repack -d</div><div class="line">Counting objects: 3, done.</div><div class="line">Writing objects: 100% (3/3), done.</div><div class="line">Total 3 (delta 0), reused 0 (delta 0)</div></pre></td></tr></table></figure>
+<h2 id="Level-42-cherry-pick"><a href="#Level-42-cherry-pick" class="headerlink" title="Level 42, cherry pick"></a>Level 42, cherry pick</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: cherry-pick</div><div class="line">Level: 42</div><div class="line">Difficulty: ***</div><div class="line"></div><div class="line">Your new feature isn&apos;t worth the time and you&apos;re going to delete it. But it has one commit that fills in `README` file, and you want this commit to be on the master as well.</div></pre></td></tr></table></figure>
+<p>要把 new-feature 分支上关于 <code>README</code> 文件的修改提取到 master 来。注意不是 merge，因为 new-feature 上还有其他的修改不想被合并到 master。可以使用 <code>git cherry-pick</code></p>
+<ol>
+<li>首先查看在 new-feature 分支中对 README.md 所做修改的 log</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">➜ git log new-feature README.md | cat</div><div class="line">commit ca32a6dac7b6f97975edbe19a4296c2ee7682f68</div><div class="line">Author: Andrey &lt;aslushnikov@gmail.com&gt;</div><div class="line">Date:   Wed Mar 28 02:25:51 2012 +0400</div><div class="line"></div><div class="line">    Filled in README.md with proper input</div><div class="line"></div><div class="line">commit ea3dbcc5e2d2359698c3606b0ec44af9f76def54</div><div class="line">Author: Andrey &lt;aslushnikov@gmail.com&gt;</div><div class="line">Date:   Wed Mar 28 02:20:32 2012 +0400</div><div class="line"></div><div class="line">    Initial commit</div></pre></td></tr></table></figure>
+<ol>
+<li><p>找到我们要提取的那个 commit，对应的 hash-code 是 ca32a6dac7b6f97975edbe19a4296c2ee7682f68</p>
+</li>
+<li><p>使用 git cherry-pick 命令把该 commit 应用到 master 来</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">➜ git cherry-pick ca32a6dac7b6f97975edbe19a4296c2ee7682f68</div><div class="line">[master 6bbb198] Filled in README.md with proper input</div><div class="line"> Author: Andrey &lt;aslushnikov@gmail.com&gt;</div><div class="line"> Date: Wed Mar 28 02:25:51 2012 +0400</div><div class="line"> 1 file changed, 1 insertion(+), 2 deletions(-)</div></pre></td></tr></table></figure>
+<h2 id="Level-43-grep"><a href="#Level-43-grep" class="headerlink" title="Level 43, grep"></a>Level 43, grep</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: grep</div><div class="line">Level: 43</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">Your project&apos;s deadline approaches, you should evaluate how many TODOs are left in your code</div></pre></td></tr></table></figure>
+<p>搜索项目中有多少个 <code>TODO</code> 字符串，可以使用 <code>git grep &lt;string&gt;</code> 命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git grep TODO</div></pre></td></tr></table></figure>
+<p>扩展：</p>
+<p><code>git grep</code> 命令和 Linux 的 <code>grep</code> 命令的作用有什么区别呢？其实两者都是用来搜索文件内容的，区别在于，<code>git grep</code> 命令会只搜索被 git 管理的那些文件，而 <code>grep</code> 命令会搜索本地文件系统中的文件，不管是不是被 git 管理。</p>
+<h2 id="Level-44-rename-commit"><a href="#Level-44-rename-commit" class="headerlink" title="Level 44, rename commit"></a>Level 44, rename commit</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: rename_commit</div><div class="line">Level: 44</div><div class="line">Difficulty: ***</div><div class="line"></div><div class="line">Correct the typo in the message of your first (non-root) commit.</div></pre></td></tr></table></figure>
+<p>纠正 first commit 中的拼写错误。git 允许对提交历史做一些修改，比如修改 message、把某个 commit 应用到另一个分支、删除某个提交。做法是使用 <code>git rebase -i &lt;commit-hash&gt;</code> 命令，它将列出这个 commit 之后的 log，然后可以对这些 log 做一些修改。</p>
+<ol>
+<li>首先用 <code>git log</code> 查看是哪个 commit 需要修改</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">➜ git log | cat</div><div class="line">commit 1920ad31920c881b01e689e404c10120fbbd08ec</div><div class="line">Author: chanthuang &lt;chant.chenhuang@gmail.com&gt;</div><div class="line">Date:   Thu Apr 7 10:46:02 2016 +0800</div><div class="line"></div><div class="line">    Second commit</div><div class="line"></div><div class="line">commit 69f37250a69f11eba0939717e1cd03c3a9f02342</div><div class="line">Author: chanthuang &lt;chant.chenhuang@gmail.com&gt;</div><div class="line">Date:   Thu Apr 7 10:46:02 2016 +0800</div><div class="line"></div><div class="line">    First coommit</div><div class="line"></div><div class="line">commit a0ed52f82cc226218902ad72f766064b991a31f0</div><div class="line">Author: chanthuang &lt;chant.chenhuang@gmail.com&gt;</div><div class="line">Date:   Thu Apr 7 10:46:02 2016 +0800</div><div class="line"></div><div class="line">    Initial</div></pre></td></tr></table></figure>
+<ol>
+<li><p>记录要修改的 commit 的上一个 commit 的 hash code：a0ed52f82cc226218902ad72f766064b991a31f0</p>
+</li>
+<li><p>使用 <code>git rebase -i</code> 进入修改的状态</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">➜ git rebase -i a0ed52f82cc226218902ad72f766064b991a31f0</div></pre></td></tr></table></figure>
+<ol>
+<li>此时会打开预设的编辑器，编辑 commit log，其中第一列表示要对每个 commit 做的修改，可能的值见下方注释。在这里我们把拼写错误的这条记录前面的命令修改为 <code>werord</code>(表示要应用这个 commit 并要修改 message)，保存退出即可。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">reword 69f3725 First coommit</div><div class="line">pick 1920ad3 Second commit</div><div class="line"></div><div class="line"># Rebase a0ed52f..1920ad3 onto a0ed52f (2 command(s))</div><div class="line">#</div><div class="line"># Commands:</div><div class="line"># p, pick = use commit</div><div class="line"># r, reword = use commit, but edit the commit message</div><div class="line"># e, edit = use commit, but stop for amending</div><div class="line"># s, squash = use commit, but meld into previous commit</div><div class="line"># f, fixup = like &quot;squash&quot;, but discard this commit&apos;s log message</div><div class="line"># x, exec = run command (the rest of the line) using shell</div><div class="line">#</div><div class="line"># These lines can be re-ordered; they are executed from top to bottom.</div><div class="line">#</div><div class="line"># If you remove a line here THAT COMMIT WILL BE LOST.</div><div class="line">#</div><div class="line"># However, if you remove everything, the rebase will be aborted.</div><div class="line">#</div><div class="line"># Note that empty commits are commented out</div></pre></td></tr></table></figure>
+<ol>
+<li>git 会再次进入编辑器，此时修改拼写错误的地方，保存并退出，git 将重新应用这个 commit。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">First commit</div><div class="line"></div><div class="line"># Please enter the commit message for your changes. Lines starting</div><div class="line"># with &apos;#&apos; will be ignored, and an empty message aborts the commit.</div><div class="line">#</div><div class="line"># Date:      Thu Apr 7 11:07:50 2016 +0800</div><div class="line">#</div><div class="line"># rebase in progress; onto 69f3725</div><div class="line"># You are currently editing a commit while rebasing branch &apos;master&apos; on &apos;69f3725&apos;.</div><div class="line">#</div><div class="line"># Changes to be committed:</div><div class="line">#       new file:   file1</div></pre></td></tr></table></figure>
+<h2 id="Level-45-squash"><a href="#Level-45-squash" class="headerlink" title="Level 45, squash"></a>Level 45, squash</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: squash</div><div class="line">Level: 45</div><div class="line">Difficulty: ****</div><div class="line"></div><div class="line">You have committed several times but would like all those changes to be one commit.</div></pre></td></tr></table></figure>
+<p>要求将多个 commit 合并成一个，与 <code>Level 44</code> 一样是修改提交历史。同样使用 git rebase -i <commit-hash> 命令来修改历史。修改时把要合并的 commit 前面的命令修改为 squash，那么这条 commit 将会与上一条合并。</commit-hash></p>
+<p>由于步骤和 <code>Level 44</code> 类似，这里仅列出修改 commit 前面的命令的那一步。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">pick 4db8fcb Adding README</div><div class="line">squash 73f993b Updating README (squash this commit into Adding README)</div><div class="line">squash f03ea95 Updating README (squash this commit into Adding README)</div><div class="line">squash 7ef90cf Updating README (squash this commit into Adding README)</div></pre></td></tr></table></figure>
+<h2 id="Level-46-merge-squash"><a href="#Level-46-merge-squash" class="headerlink" title="Level 46, merge squash"></a>Level 46, merge squash</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: merge_squash</div><div class="line">Level: 46</div><div class="line">Difficulty: ***</div><div class="line"></div><div class="line">Merge all commits from the long-feature-branch as a single commit.</div></pre></td></tr></table></figure>
+<p>要求将某个分支的所有修改都应用到 master。与 Merge 和 rebase 不同的是，这些修改被要求合并成一个。可以在 merge 时加上 <code>--squash</code> 参数。这样分支上的所有修改都会到 staging area 来，然后再 commit 一次，就能把那些修改一次性提交了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">➜ git merge --squash long-feature-branch</div><div class="line">Squash commit -- not updating HEAD</div><div class="line">Automatic merge went well; stopped before committing as requested</div><div class="line"></div><div class="line">➜ git commit -m &apos;merge long-feature-branch in one commit&apos;</div><div class="line">[master d0684b5] merge long-feature-branch in one commit</div><div class="line"> 1 file changed, 3 insertions(+)</div><div class="line"> create mode 100644 file3</div></pre></td></tr></table></figure>
+<h2 id="Level-47-reorder"><a href="#Level-47-reorder" class="headerlink" title="Level 47, reorder"></a>Level 47, reorder</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: reorder</div><div class="line">Level: 47</div><div class="line">Difficulty: ****</div><div class="line"></div><div class="line">You have committed several times but in the wrong order. Please reorder your commits.</div></pre></td></tr></table></figure>
+<p>修改某几个提交的顺序。提到修改历史，我们就应该想起 <code>git rebase -i</code> 命令。</p>
+<ol>
+<li>类似于 <code>Level 44</code> 操作。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">➜ git log</div><div class="line">➜ git rebase -i 439d539dd9165e7becf230d3506ce08c1d3146b0</div></pre></td></tr></table></figure>
+<ol>
+<li>来到到修改 commit 的那一步。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">pick 071e2e7 First commit</div><div class="line">pick 1089baf Third commit</div><div class="line">pick ae13c74 Second commit</div></pre></td></tr></table></figure>
+<ol>
+<li>把顺序修改对，即把 <code>Second commit</code> 和 <code>Third commit</code> 整行顺序对调。然后保存退出，即可。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">pick 071e2e7 First commit</div><div class="line">pick ae13c74 Second commit</div><div class="line">pick 1089baf Third commit</div></pre></td></tr></table></figure>
+<h2 id="Level-48-bisect"><a href="#Level-48-bisect" class="headerlink" title="Level 48, bisect"></a>Level 48, bisect</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: bisect</div><div class="line">Level: 48</div><div class="line">Difficulty: ***</div><div class="line"></div><div class="line">A bug was introduced somewhere along the way.  You know that running `ruby prog.rb 5` should output 15.  You can also run `make test`.  What are the first 7 chars of the hash of the commit that introduced the bug.</div></pre></td></tr></table></figure>
+<p>现在项目中有个 bug 是某一次 commit 引入的。使用 <code>make test</code> 可以测试项目，返回值是 0 的话表示测试通过，无 bug。要求找出引入 bug 的那个 commit。</p>
+<p>我们的第一反应是看 commit log，将代码一个一个回退到各个版本，运行 <code>make test</code> 检查测试是否通过，以此来找到引入 bug 的那一次 commit。而 git 提供了 <code>bisect</code> 二分搜索方法来为我们做这件事。</p>
+<p><code>git birect</code> 的基本用法如下：</p>
+<ol>
+<li>执行 <code>git birect start</code>，表示开始二分搜索；</li>
+<li>找到任意一个有问题的 commit，标记一下这个版本。一般这种情况下当前版本都是有问题的，所以 <code>git birect bad</code></li>
+<li>找到任意一个没问题的 commit，标记一下这个版本。如 <code>git birect good f608824888b83bbedc1f658be7496ffea467a8fb</code></li>
+<li>当你至少标记了一个 good 和一个 bad 之后，就会看到类似于 <code>Bisecting: 675 revisions left to test after this</code> 的提示，告诉你你标记的两个版本之间有这么多个待测试的版本。</li>
+<li>然后两者中间的那个版本会自动被 <code>checkout</code>，你要做的是测试一下这个版本有没有问题，并标记为 <code>git birect good 或 bad</code></li>
+<li>git 会自动重复第 4 步，然后你重复第 5 步。这样一直二分搜索下来，直到找到第一个有问题的版本。</li>
+</ol>
+<p>当然，这样一个一个版本手工测试还是很麻烦，如果你的项目有没有 bug 可以通过脚本自动检测，然后通过返回 0 来表示测试通过，返回其他值表示不通过，那么就可以省下手工测试的环节了。直接在第 4 步标记完之后，执行 <code>git run &lt;你的测试脚本&gt;</code>，git 将自动重复执行 第 4、5 步，直至找到第一个有问题的版本。</p>
+<p>下面来看 githug 的这个例子：</p>
+<ol>
+<li>开始二分搜索：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">➜ git bisect start</div></pre></td></tr></table></figure>
+<ol>
+<li>检查当前版本，测试一下，发现不通过，标记为 bad</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">➜ make test</div><div class="line">ruby prog.rb 5 | ruby test.rb</div><div class="line">make: *** [test] Error 1</div><div class="line"></div><div class="line">➜ git bisect bad</div></pre></td></tr></table></figure>
+<ol>
+<li>查看 log，checkout 到第一个版本，测试一下，通过，标记为 good</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">➜ git:(f351ca6) git log</div><div class="line"></div><div class="line">➜ git:(f351ca6) git checkout f608824888b83bbedc1f658be7496ffea467a8fb</div><div class="line">Previous HEAD position was f351ca6... Another Commit</div><div class="line">HEAD is now at f608824... First commit</div><div class="line"></div><div class="line">➜ git:(f608824) make test</div><div class="line">ruby prog.rb 5 | ruby test.rb</div><div class="line"></div><div class="line">➜ git:(f608824) git bisect good</div><div class="line">Bisecting: 9 revisions left to test after this (roughly 3 steps)</div><div class="line">[fdbfc0d403e5ac0b2659cbfa2cbb061fcca0dc2a] Another Commit</div></pre></td></tr></table></figure>
+<ol>
+<li>已经标记了一个 good 和一个 bad，可以执行自动二分搜索。最终输出的结果就是第一个有问题的 commit。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">➜ git:(fdbfc0d) git bisect run make test</div><div class="line">running make test</div><div class="line">ruby prog.rb 5 | ruby test.rb</div><div class="line">Bisecting: 4 revisions left to test after this (roughly 2 steps)</div><div class="line">[18ed2ac1522a014412d4303ce7c8db39becab076] Another Commit</div><div class="line">running make test</div><div class="line">ruby prog.rb 5 | ruby test.rb</div><div class="line">make: *** [test] Error 1</div><div class="line">Bisecting: 2 revisions left to test after this (roughly 1 step)</div><div class="line">[9f54462abbb991b167532929b34118113aa6c52e] Another Commit</div><div class="line">running make test</div><div class="line">ruby prog.rb 5 | ruby test.rb</div><div class="line">Bisecting: 0 revisions left to test after this (roughly 1 step)</div><div class="line">[5db7a7cb90e745e2c9dbdd84810ccc7d91d92e72] Another Commit</div><div class="line">running make test</div><div class="line">ruby prog.rb 5 | ruby test.rb</div><div class="line">18ed2ac1522a014412d4303ce7c8db39becab076 is the first bad commit</div><div class="line">commit 18ed2ac1522a014412d4303ce7c8db39becab076</div><div class="line">Author: Robert Bittle &lt;guywithnose@gmail.com&gt;</div><div class="line">Date:   Mon Apr 23 06:52:10 2012 -0400</div><div class="line"></div><div class="line">    Another Commit</div><div class="line"></div><div class="line">:100644 100644 917e70054c8f4a4a79a8e805c0e1601b455ad236 7562257b8e6446686ffc43a2386c50c254365020 M	prog.rb</div><div class="line">bisect run success</div></pre></td></tr></table></figure>
+<h2 id="Level-49-stage-lines"><a href="#Level-49-stage-lines" class="headerlink" title="Level 49, stage lines"></a>Level 49, stage lines</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: stage_lines</div><div class="line">Level: 49</div><div class="line">Difficulty: ****</div><div class="line"></div><div class="line">You&apos;ve made changes within a single file that belong to two different features, but neither of the changes are yet staged. Stage only the changes belonging to the first feature.</div></pre></td></tr></table></figure>
+<p>工作区在同一个文件中做了一些修改，现在想要其中的某些修改被 add 到 staging area，剩余的修改保留在工作区中。</p>
+<p>可以使用 <code>git add</code> 的 <code>-p</code> 参数，选择哪些修改是要 add 的，哪些修改是先不 add 的。执行该命令会输出类似于 <code>git diff</code> 的结果，然后可以选择 <code>e</code> 进行编辑。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">➜ git add -p feature.rb</div><div class="line">diff --git a/feature.rb b/feature.rb</div><div class="line">index 1a271e9..4a80dda 100644</div><div class="line">--- a/feature.rb</div><div class="line">+++ b/feature.rb</div><div class="line">@@ -1 +1,3 @@</div><div class="line"> this is the class of my feature</div><div class="line">+This change belongs to the first feature</div><div class="line">+This change belongs to the second feature</div><div class="line">Stage this hunk [y,n,q,a,d,/,e,?]? e</div></pre></td></tr></table></figure>
+<p>选择 <code>e</code> 后会进入编辑器，此时只要将不想被 add 的 <code>+</code> 号行删除，保存并退出，就不会被 add 到 staging area。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"># Manual hunk edit mode -- see bottom for a quick guide</div><div class="line">@@ -1 +1,3 @@</div><div class="line"> this is the class of my feature</div><div class="line">+This change belongs to the first feature</div><div class="line"># ---</div><div class="line"># To remove &apos;-&apos; lines, make them &apos; &apos; lines (context).</div><div class="line"># To remove &apos;+&apos; lines, delete them.</div><div class="line"># Lines starting with # will be removed.</div><div class="line">#</div><div class="line"># If the patch applies cleanly, the edited hunk will immediately be</div><div class="line"># marked for staging. If it does not apply cleanly, you will be given</div><div class="line"># an opportunity to edit again. If all lines of the hunk are removed,</div><div class="line"># then the edit is aborted and the hunk is left unchanged.</div></pre></td></tr></table></figure>
+<h2 id="Level-50-find-old-branch"><a href="#Level-50-find-old-branch" class="headerlink" title="Level 50, find old branch"></a>Level 50, find old branch</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: find_old_branch</div><div class="line">Level: 50</div><div class="line">Difficulty: ****</div><div class="line"></div><div class="line">You have been working on a branch but got distracted by a major issue and forgot the name of it. Switch back to that branch.</div></pre></td></tr></table></figure>
+<p>你在当前分支 <code>kill_the_batman</code> 工作完了之后，忘记了之前是从哪里来的了。git 提供了 <code>git reflog</code> 命令来管理所有操作记录。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">➜ git reflog | cat</div><div class="line">894a16d HEAD@&#123;0&#125;: commit: commit another todo</div><div class="line">6876e5b HEAD@&#123;1&#125;: checkout: moving from solve_world_hunger to kill_the_batman</div><div class="line">324336a HEAD@&#123;2&#125;: commit: commit todo</div><div class="line">6876e5b HEAD@&#123;3&#125;: checkout: moving from blowup_sun_for_ransom to solve_world_hunger</div><div class="line">6876e5b HEAD@&#123;4&#125;: checkout: moving from kill_the_batman to blowup_sun_for_ransom</div><div class="line">6876e5b HEAD@&#123;5&#125;: checkout: moving from cure_common_cold to kill_the_batman</div><div class="line">6876e5b HEAD@&#123;6&#125;: commit (initial): initial commit</div></pre></td></tr></table></figure>
+<p>可以看到 <code>moving from solve_world_hunger to kill_the_batman</code>，所以知道之前是从 <code>solve_world_hunger</code> 来到 <code>kill_the_batman</code> 的。按题目要求，checkout 回去 <code>solve_world_hunger</code> 即可。</p>
+<h2 id="Level-51-revert"><a href="#Level-51-revert" class="headerlink" title="Level 51, revert"></a>Level 51, revert</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Name: revert</div><div class="line">Level: 51</div><div class="line">Difficulty: ****</div><div class="line"></div><div class="line">You have committed several times but want to undo the middle commit.</div><div class="line">All commits have been pushed, so you can&apos;t change existing history.</div></pre></td></tr></table></figure>
+<p>回退之前的某一个 commit。注意这里已经 push 过，所以不应该使用 <code>git rebase -i</code> 命令去修改历史，以免版本库混乱。而可以使用 <code>git revert</code> 来回退某个提交。当然，这将产生一个新的 commit，在编辑器中写上 message，保存并退出即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">➜ git log --oneline | cat</div><div class="line">dfdace3 Revert &quot;Bad commit&quot;</div><div class="line">884980a Second commit</div><div class="line">ddd7b37 Bad commit</div><div class="line">9512eea First commit</div><div class="line"></div><div class="line">➜ git revert ddd7b37</div><div class="line">[master dfdace3] Revert &quot;Bad commit&quot;</div><div class="line"> 1 file changed, 0 insertions(+), 0 deletions(-)</div><div class="line"> delete mode 100644 file3</div></pre></td></tr></table></figure>
+<h2 id="Level-52-restore"><a href="#Level-52-restore" class="headerlink" title="Level 52, restore"></a>Level 52, restore</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: restore</div><div class="line">Level: 52</div><div class="line">Difficulty: ****</div><div class="line"></div><div class="line">You decided to delete your latest commit by running `git reset --hard HEAD^`.  (Not a smart thing to do.)  You then change your mind, and want that commit back.  Restore the deleted commit.</div></pre></td></tr></table></figure>
+<p>你之前一冲动，<code>git reset --hard HEAD^</code> 使版本库丢掉了一个 commit，回到了倒数第二个 commit 的状态。现在想找回来。</p>
+<p>此时 <code>git log</code> 已看不到最后一次 commit 了，但 <code>git reflog</code> 还能看到，因为它保存着你所做的修改。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">➜ git reflog | cat</div><div class="line">550223b HEAD@&#123;0&#125;: reset: moving to HEAD^</div><div class="line">b97ae0a HEAD@&#123;1&#125;: commit: Restore this commit</div><div class="line">550223b HEAD@&#123;2&#125;: commit: First commit</div><div class="line">3b0fd52 HEAD@&#123;3&#125;: commit (initial): Initial commit</div></pre></td></tr></table></figure>
+<p>看到 <code>40a0079</code> 就是你要找回的那次 commit。接下来 <code>git checkout</code> 它即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">➜ git checkout b97ae0a</div></pre></td></tr></table></figure>
+<h2 id="Level-53-conflict"><a href="#Level-53-conflict" class="headerlink" title="Level 53, conflict"></a>Level 53, conflict</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: conflict</div><div class="line">Level: 53</div><div class="line">Difficulty: ****</div><div class="line"></div><div class="line">You need to merge mybranch into the current branch (master). But there may be some incorrect changes in mybranch which may cause conflicts. Solve any merge-conflicts you come across and finish the merge.</div></pre></td></tr></table></figure>
+<p>将 <code>mybranch</code> 分支 <code>merge</code> 到 <code>master</code>，期间会有冲突，用编辑器编辑冲突的文件，去掉带 <code>&lt;&lt;&lt;</code>、<code>===</code> 和 <code>&gt;&gt;&gt;</code> 的行，并编辑好它们之间的行，即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">➜ git merge master mybranch</div><div class="line">Auto-merging poem.txt</div><div class="line">CONFLICT (content): Merge conflict in poem.txt</div><div class="line">Automatic merge failed; fix conflicts and then commit the result.</div><div class="line"></div><div class="line">➜ cat poem.txt</div><div class="line">Humpty dumpty</div><div class="line">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</div><div class="line">Categorized shoes by color</div><div class="line">=======</div><div class="line">Sat on a wall</div><div class="line">&gt;&gt;&gt;&gt;&gt;&gt;&gt; mybranch</div><div class="line">Humpty dumpty</div><div class="line">Had a great fall</div><div class="line"></div><div class="line">➜ vi poem.txt</div><div class="line"></div><div class="line">➜ cat poem.txt</div><div class="line">Humpty dumpty</div><div class="line">Sat on a wall</div><div class="line">Humpty dumpty</div><div class="line">Had a great fall</div><div class="line"></div><div class="line">➜ git status -s</div><div class="line">UU poem.txt</div><div class="line"></div><div class="line">➜ git add poem.txt</div><div class="line"></div><div class="line">➜ git commit -m &apos;Merge mybranch&apos;</div><div class="line">[master a08e925] Merge mybranch</div></pre></td></tr></table></figure>
+<h2 id="Level-54-submodule"><a href="#Level-54-submodule" class="headerlink" title="Level 54, submodule"></a>Level 54, submodule</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: submodule</div><div class="line">Level: 54</div><div class="line">Difficulty: **</div><div class="line"></div><div class="line">You want to include the files from the following repo: `https://github.com/jackmaney/githug-include-me` into a the folder `./githug-include-me`. Do this without cloning the repo or copying the files from the repo into this repo.</div></pre></td></tr></table></figure>
+<p>要求将一个仓库作为一个 <code>submodule</code> 引入到当前项目中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">➜ git submodule add https://github.com/jackmaney/githug-include-me githug-include-me</div><div class="line">Cloning into &apos;githug-include-me&apos;...</div><div class="line">remote: Counting objects: 9, done.</div><div class="line">remote: Total 9 (delta 0), reused 0 (delta 0), pack-reused 9</div><div class="line">Unpacking objects: 100% (9/9), done.</div><div class="line">Checking connectivity... done.</div></pre></td></tr></table></figure>
+<h2 id="Level-55-结束"><a href="#Level-55-结束" class="headerlink" title="Level 55, 结束"></a>Level 55, 结束</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Congratulations, you have solved the level!</div><div class="line"></div><div class="line">Name: contribute</div><div class="line">Level: 55</div><div class="line">Difficulty: ***</div><div class="line"></div><div class="line">This is the final level, the goal is to contribute to this repository by making a pull request on GitHub.  Please note that this level is designed to encourage you to add a valid contribution to Githug, not testing your ability to create a pull request.  Contributions that are likely to be accepted are levels, bug fixes and improved documentation.</div></pre></td></tr></table></figure>
+<p>到这里所有关卡就结束了，这一关是鼓励大家为 Githug 项目做贡献。</p>
+<h2 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h2><p>Git 的管理相当复杂，又十分强大，这里列出的很多命令都还没有详细去了解，以上这些题只是能列出常见的场景和相应的操作方法，至于要了解各个命令的详细用法，还是得系统地学习才行。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/git/" rel="tag">#git</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/29/我又来开博客了/" rel="next" title="我又来开博客了">
+                <i class="fa fa-chevron-left"></i> 我又来开博客了
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/19/Android-横竖屏处理的知识小结/" rel="prev" title="Android 横竖屏处理的知识小结">
+                Android 横竖屏处理的知识小结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Chant" />
+          <p class="site-author-name" itemprop="name">Chant</p>
+          <p class="site-description motion-element" itemprop="description">分享前端知识、Android开发知识</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-1-init"><span class="nav-number">1.</span> <span class="nav-text">Level 1, init</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-2-config"><span class="nav-number">2.</span> <span class="nav-text">Level 2, config</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-3-add"><span class="nav-number">3.</span> <span class="nav-text">Level 3, add</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-4-commit"><span class="nav-number">4.</span> <span class="nav-text">Level 4, commit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-5-clone"><span class="nav-number">5.</span> <span class="nav-text">Level 5, clone</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-6-clone-to-folder"><span class="nav-number">6.</span> <span class="nav-text">Level 6, clone to folder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-7-ignore"><span class="nav-number">7.</span> <span class="nav-text">Level 7, ignore</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-8-include"><span class="nav-number">8.</span> <span class="nav-text">Level 8, include</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-9-status"><span class="nav-number">9.</span> <span class="nav-text">Level 9, status</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-10-number-of-files-committed"><span class="nav-number">10.</span> <span class="nav-text">Level 10, number of files committed</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-11-rm"><span class="nav-number">11.</span> <span class="nav-text">Level 11, rm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-12-rm-cached"><span class="nav-number">12.</span> <span class="nav-text">Level 12, rm cached</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-13-stash"><span class="nav-number">13.</span> <span class="nav-text">Level 13, stash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-14-rename"><span class="nav-number">14.</span> <span class="nav-text">Level 14, rename</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-15-restructure"><span class="nav-number">15.</span> <span class="nav-text">Level 15, restructure</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-16-log"><span class="nav-number">16.</span> <span class="nav-text">Level 16, log</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-17-tag"><span class="nav-number">17.</span> <span class="nav-text">Level 17, tag</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-18-push-tags"><span class="nav-number">18.</span> <span class="nav-text">Level 18, push tags</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-19-commit-amend"><span class="nav-number">19.</span> <span class="nav-text">Level 19, commit amend</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-20-commit-in-future"><span class="nav-number">20.</span> <span class="nav-text">Level 20, commit in future</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-21-reset"><span class="nav-number">21.</span> <span class="nav-text">Level 21, reset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-22-reset-soft"><span class="nav-number">22.</span> <span class="nav-text">Level 22, reset soft</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-23-checkout-file"><span class="nav-number">23.</span> <span class="nav-text">Level 23, checkout file</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-24-remote"><span class="nav-number">24.</span> <span class="nav-text">Level 24, remote</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-25-remote-url"><span class="nav-number">25.</span> <span class="nav-text">Level 25, remote url</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-26-pull"><span class="nav-number">26.</span> <span class="nav-text">Level 26, pull</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-27-remote-add"><span class="nav-number">27.</span> <span class="nav-text">Level 27, remote add</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-28-push"><span class="nav-number">28.</span> <span class="nav-text">Level 28, push</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-29-diff"><span class="nav-number">29.</span> <span class="nav-text">Level 29, diff</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-30-blame"><span class="nav-number">30.</span> <span class="nav-text">Level 30, blame</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-31-branch"><span class="nav-number">31.</span> <span class="nav-text">Level 31, branch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-32-checkout"><span class="nav-number">32.</span> <span class="nav-text">Level 32, checkout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-33-checkout-tag"><span class="nav-number">33.</span> <span class="nav-text">Level 33, checkout tag</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-34-checkout-tag-over-branch"><span class="nav-number">34.</span> <span class="nav-text">Level 34, checkout tag over branch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-35-branch-at"><span class="nav-number">35.</span> <span class="nav-text">Level 35, branch at</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-36-delete-branch"><span class="nav-number">36.</span> <span class="nav-text">Level 36, delete branch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-37-push-branch"><span class="nav-number">37.</span> <span class="nav-text">Level 37, push branch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-38-merge"><span class="nav-number">38.</span> <span class="nav-text">Level 38, merge</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-39-fetch"><span class="nav-number">39.</span> <span class="nav-text">Level 39, fetch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-40-rebase"><span class="nav-number">40.</span> <span class="nav-text">Level 40, rebase</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-41-repack"><span class="nav-number">41.</span> <span class="nav-text">Level 41, repack</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-42-cherry-pick"><span class="nav-number">42.</span> <span class="nav-text">Level 42, cherry pick</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-43-grep"><span class="nav-number">43.</span> <span class="nav-text">Level 43, grep</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-44-rename-commit"><span class="nav-number">44.</span> <span class="nav-text">Level 44, rename commit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-45-squash"><span class="nav-number">45.</span> <span class="nav-text">Level 45, squash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-46-merge-squash"><span class="nav-number">46.</span> <span class="nav-text">Level 46, merge squash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-47-reorder"><span class="nav-number">47.</span> <span class="nav-text">Level 47, reorder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-48-bisect"><span class="nav-number">48.</span> <span class="nav-text">Level 48, bisect</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-49-stage-lines"><span class="nav-number">49.</span> <span class="nav-text">Level 49, stage lines</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-50-find-old-branch"><span class="nav-number">50.</span> <span class="nav-text">Level 50, find old branch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-51-revert"><span class="nav-number">51.</span> <span class="nav-text">Level 51, revert</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-52-restore"><span class="nav-number">52.</span> <span class="nav-text">Level 52, restore</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-53-conflict"><span class="nav-number">53.</span> <span class="nav-text">Level 53, conflict</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-54-submodule"><span class="nav-number">54.</span> <span class="nav-text">Level 54, submodule</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-55-结束"><span class="nav-number">55.</span> <span class="nav-text">Level 55, 结束</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结束"><span class="nav-number">56.</span> <span class="nav-text">结束</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chant</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
